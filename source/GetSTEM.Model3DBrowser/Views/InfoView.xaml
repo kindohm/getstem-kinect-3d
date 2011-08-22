@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="GetSTEM.Model3DBrowser.Views.InfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             DataContext="{Binding Main, Source={StaticResource Locator}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+
+        <Border    Margin="10"        HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" CornerRadius="10"
+                           Background="#EE9999FF" Padding="20">
+            <StackPanel
+>
+                <TextBlock
+                    Margin="0 15 0 0"
+                    Text="X Rotation"
+                    FontWeight="Bold"/>
+                <TextBlock
+                    Text="{Binding XAxisAngleIncrementEquationActual}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Text="X Axis Angle: "/>
+                    <TextBlock
+                    Text="{Binding RotationXAngle, StringFormat={}{0:0.0}°}"/>
+                </StackPanel>
+
+                <TextBlock
+                    Margin="0 15 0 0"
+                    Text="Y Rotation"
+                    FontWeight="Bold"/>
+                <TextBlock
+                    Text="{Binding YAxisAngleIncrementEquationActual}"/>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Text="Y Axis Angle: "/>
+                    <TextBlock
+                    Text="{Binding RotationYAngle, StringFormat={}{0:0.0}°}"/>
+                </StackPanel>
+
+                <TextBlock
+                    Margin="0 15 0 0"
+                    Text="{Binding YAxisAngleIncrementEquation}"/>
+
+            </StackPanel>
+
+        </Border>
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application 
+    x:Class="GetSTEM.Model3DBrowser.App" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:framework="clr-namespace:GetSTEM.Model3DBrowser.Framework" 
+    StartupUri="Views/MainWindow.xaml" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d">
+    <Application.Resources>
+        <framework:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
+
+        <RadialGradientBrush 
+            x:Key="DefaultBackground"
+            Center=".5,.8" GradientOrigin=".5,.8" RadiusX=".5" RadiusY=".3">
+            <GradientStop Offset="0" Color="#913A75"/>
+            <GradientStop Offset="1" Color="#190A14"/>
+        </RadialGradientBrush>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+
+    </Application.Resources>
+</Application>

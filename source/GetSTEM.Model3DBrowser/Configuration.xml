@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ModelConfiguration>
+  <LetterModels>
+
+    <LetterModel>
+      <ModelPath>ModelFiles\g.3ds</ModelPath>
+      <Color>#666666</Color>
+      <OffsetX>-120</OffsetX>
+      <OffsetY>-7</OffsetY>
+      <OffsetZ>0</OffsetZ>
+      <Scale>.6</Scale>
+    </LetterModel>
+
+    <LetterModel>
+      <ModelPath>ModelFiles\e.3ds</ModelPath>
+      <Color>#666666</Color>
+      <OffsetX>-85</OffsetX>
+      <OffsetY>-4.5</OffsetY>
+      <OffsetZ>0</OffsetZ>
+      <Scale>.6</Scale>
+    </LetterModel>
+
+    <LetterModel>
+      <ModelPath>ModelFiles\t.3ds</ModelPath>
+      <Color>#666666</Color>
+      <OffsetX>-60</OffsetX>
+      <OffsetY>0</OffsetY>
+      <OffsetZ>0</OffsetZ>
+      <Scale>.6</Scale>
+    </LetterModel>
+
+
+    <LetterModel>
+      <ModelPath>ModelFiles\S.3ds</ModelPath>
+      <Color>Red</Color>
+      <OffsetX>-5</OffsetX>
+      <OffsetY>0</OffsetY>
+      <OffsetZ>-5</OffsetZ>
+    </LetterModel>
+
+    <LetterModel>
+      <ModelPath>ModelFiles\T-cap.3ds</ModelPath>
+      <Color>Blue</Color>
+      <OffsetX>17</OffsetX>
+      <OffsetY>5</OffsetY>
+      <OffsetZ>0</OffsetZ>
+    </LetterModel>
+
+    <LetterModel>
+      <ModelPath>ModelFiles\E-cap.3ds</ModelPath>
+      <Color>Green</Color>
+      <OffsetX>37</OffsetX>
+      <OffsetY>-5</OffsetY>
+      <OffsetZ>5</OffsetZ>
+    </LetterModel>
+    
+    <LetterModel>
+      <ModelPath>ModelFiles\M.3ds</ModelPath>
+      <Color>Yellow</Color>
+      <OffsetX>78</OffsetX>
+      <OffsetY>0</OffsetY>
+      <OffsetZ>0</OffsetZ>
+    </LetterModel>
+  </LetterModels>
+
+</ModelConfiguration>

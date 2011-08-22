@@ -1,0 +1,1407 @@
+<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>Ab3d.Reader3ds</name>
+	</assembly>
+	<members>
+		<member name="T:Ab3d.Common.Reader3ds.ResolveResourceKeyDelegate"><summary>
+            ResolveResourceKeyDelegate is used to customize the resource key names used in GetXaml method when UseResources property is set to true and ReadGeometry method was used.
+            </summary><param name="resource">resource</param><param name="recommendedKey">recommendedKey</param><returns>key name that will be used</returns></member>
+		<member name="T:Ab3d.Common.Reader3ds.ResolveImagePathDelegate"><summary>
+            ResolveImagePathDelegate is used to specify the path where the image will be saved
+            </summary><param name="imageToResolve">imageToResolve</param><returns>path where the image will be saved</returns></member>
+		<member name="T:Ab3d.Common.Reader3ds.BaseXamlWriterSettings"><summary>
+            BaseXamlWriterSettings is a base class that defines settings for GetXaml method.
+            To get xaml for WPF use <seealso cref="T:Ab3d.Common.Reader3ds.WpfXamlWriterSettings" />. For Silverlight use <seealso cref="!:SilverlightXamlWriterSettings" />.
+            </summary></member>
+		<member name="F:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.DefaultXamlNamespaceDeclaration"><summary>
+            Default Xaml Namespace declaration
+            </summary></member>
+		<member name="M:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.#ctor"><summary>
+            Constructor
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.ResolveImagePath"><summary>
+            Callback to set the path where the image will be saved
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.NamedObjects"><summary>
+            Gets or sets NamedObjects dictionary with names (as keys) of the objects (as values). The defined names will be used to name the objects.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.XamlNamespace"><summary>
+            Gets or sets XamlNamespace
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.RootObject"><summary>
+            Gets or sets a string to specify a custom root object. If null or empty the last read object will be set as root object. (example values: "UserControl" or "Window").
+            </summary><remarks><para>
+            RootObject specifies the object that will be used as a root objects in the returned xaml. 
+            </para><para>
+            If null or empty the last read object will be set as root object.
+            </para><para>
+            With setting the <b>RootObject</b> a custom object can be used as a root object. For example "UserControl" or "Window".
+            </para><para>
+            It is also possible to specify more then one root object - for example "UserControl;Grid;Grid". This will use UserControl as a root object and than add Grid as its child. The read objects will be then added to the Grid.
+            </para></remarks></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.StartComment"><summary>
+            Gets or sets start comment
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.IndentStep"><summary>
+            Gets or sets indent step - default value is 4
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.FullNumberFormatString"><summary>
+            Gets full NumberFormatString - for example "{0:0.###}". To set the number format use NumberFormatString property.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.NumberFormatString"><summary>
+            Gets or sets NumberFormatString - for example 0.00 for 2 decimals or 0.## for 2 decimals if not 0. Empty string means unlimited number of decimals.
+            Default value is 0.###
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.WriteElementNames"><summary>
+            Gets or sets a Boolean that specifies if element names are written to the xaml string. Default value is true.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.WriteRootObjectResouceKey"><summary>
+            Gets or sets whether the xaml is written to a ResourceDictionary
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.IsResourceDictionary"><summary>
+            Gets or sets whether the xaml is written to a ResourceDictionary
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.MaxDataTextLength"><summary>
+            Gets or sets the maximum length of texts used for Path's Data, PointCollection, etc. If data text is largest than MaxDataTextLength, the data text is truncated and "..." is added to the end of text.
+            Default value is 0, which does not limits the data text length.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.UseColorNames"><summary>
+            If true (default) known colors are written by their name (Black). If false a hexedecimal ARGB display is used (0xFF000000).
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.DefaultImageUriFormatString"><summary>
+            Gets or sets the format string that is used to write image's uri when ResolveImagePath delegate is not used. Default value is "image_{0}.{1}".
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.UseCanvasPositionForTranslateTransform"><summary>
+            Gets or sets a Boolean that specifies if Canvas.Left and Canvas.Top are used instead of RenderTransform or LayoutTransform that are only translate transformations.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.BaseXamlWriterSettings.WriteTransformationsAsElement"><summary>
+            Gets or sets a Boolean that specifies if the transformations are written as inner elements or as attributes.
+            </summary><remarks><para>
+            If <b>WriteTransformationsAsElement</b> is <b>true</b> than the transformations are written as inner elements. For example:
+            </para><para>
+            &lt;Canvas&gt;<br />
+                &lt;RenderTransform&gt;<br />
+                    &lt;MatrixTransform Matrix="1 0 0 1 10 20"/&gt;<br />
+                &lt;/RenderTransform&gt;<br />
+                ...
+            </para><para>
+            If <b>WriteTransformationsAsElement</b> is <b>false</b> than the transformations are written as attributes. For example:
+            </para><code lang="xaml">
+            &lt;Canvas RenderTransform="1 0 0 10 20"...
+            </code><para><b>NOTE:</b><br />
+            For Silverlight projects the visual designer in Visual Studio 2010 and Expression Blend may not parse transformations as attributes correctly! It works correctly for WPF projects. So for Silverlight projects it is recommended to write transformations as elements.
+            </para></remarks></member>
+		<member name="T:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings"><summary>
+            IResourceXamlWriterSettings interface is used to specify setting that tell Xaml Writer how to write Pens and Brushes as resources.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.UseResources"><summary>
+            If true pens and brushes that are uses more than once are written into resources. If false resources are not used.
+            Setting this property actually sets <see cref="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesCountLimit" />.
+            Note: Resources are used only when GetXaml method is called and not with ReadGeometry method.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesCountLimit"><summary>
+            Defines if the pens and brushed are written into resources. This property also sets the <see cref="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.UseResources" />
+            If ResourcesCountLimit is equal or less than 0 than resources are not used.
+            If ResourcesCountLimit is 1 than all pens and brushes are written to resources.
+            If ResourcesCountLimit is 2 (or higher) than all pens and brushes that are used 2 (or more) times are written to resources.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesBrushStartIndex"><summary>
+            Start index used with <see cref="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesSolidColorBrushKeyFormatString" />.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesPenStartIndex"><summary>
+            Start index used with <see cref="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesPenKeyFormatString" /></summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesSolidColorBrushKeyFormatString"><summary>
+            Format string used to format the SolidColorBrush resource keys.
+            Default value is "Brush{0}"
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResourcesPenKeyFormatString"><summary>
+            Format string used to format the Pen resource keys.
+            Default value is "Pen{0}"
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.ResolveResourceKey"><summary>
+            Callback to customize the resource key names used in GetXaml when <see cref="P:Ab3d.Common.Reader3ds.IResourceXamlWriterSettings.UseResources" /> is set to true and ReadGeometry method was used.
+            </summary></member>
+		<member name="T:Ab3d.Common.Reader3ds.WpfXamlWriterSettings"><summary>
+            WpfXamlWriterSettings defines settings for use with GetXaml method to get xaml defined for WPF.
+            </summary></member>
+		<member name="M:Ab3d.Common.Reader3ds.WpfXamlWriterSettings.#ctor"><summary>
+            Constructor
+            </summary></member>
+		<member name="T:Ab3d.Animator3ds"><summary>
+             Animator3ds is a helper class for playing animations stored in 3ds file
+             </summary><remarks><note>PRO VERSION ONLY: Animator3ds can be used only in Pro version.</note><para>Animator3ds simplifies playing animations from 3ds files by simply setting some animation properties (for example <see cref="P:Ab3d.Animator3ds.AnimationDuration" />, <see cref="P:Ab3d.Animator3ds.AutoRepeat" />, <see cref="P:Ab3d.Animator3ds.AutoReverse" />, etc) and simply calling <see cref="M:Ab3d.Animator3ds.DoAnimate" /> method each time the new frame should be rendered.
+             In DoAnimate method the frame that is renders is calculated from the time difference between previous and this DoAnimate calls. This way the animation is played according to the set <see cref="P:Ab3d.Animator3ds.AnimationDuration" /> or <see cref="P:Ab3d.Animator3ds.ModelFramesPerSecond" /> regardless of the computer on which it is run.
+             That means that on slower computers there would be less frames per seconds rendered, and on faster computer more - but the animation would last the same amount of time.</para><para>Because Animator3ds relays on Reader3ds (it is calling its <see cref="M:Ab3d.Reader3ds.GetFrame(System.Int32,System.Windows.Controls.Viewport3D)" /> method) it must be constructed with an instance of Reader3ds. This can be simplified with using the <see cref="P:Ab3d.Reader3ds.Animator" /> property on Reader3ds class.</para></remarks><example>
+             The following example shows how to use CompositionTarget.Rendering event for creating a frame-base animation with Reader3ds and Animator3ds.
+             <code>
+             private Reader3ds _newReader3ds;
+             
+             void StartAnimation()
+             {
+                 _newReader3ds= new Reader3ds();
+                 _newReader3ds.Animator.AutoRepeat = true;
+                 _newReader3ds.Animator.AutoReverse = false;
+                 _newReader3ds.Animator.AnimationDuration = new TimeSpan(0, 0, 10); // 10 seconds
+                 // instead of AnimationDuration it is possible to define how many 3ds frames per second are played
+                 //_newReader3ds.Animator.ModelFramesPerSecond = 10; 
+            	    
+                 _newReader3ds.ReadFile("SampleAnimation.3ds", myViewport);
+            	    
+                 CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+             }
+            
+             void EndAnimation()
+             {
+                 CompositionTarget.Rendering -= new EventHandler(CompositionTarget_Rendering);
+            	    _newReader3ds.Animator.Stop();
+             }     
+            
+             void CompositionTarget_Rendering(object sender, EventArgs e)
+             {
+                 _newReader3ds.Animator.DoAnimate();
+             }
+             </code>
+             For a full sample see the Player3ds sample.
+             </example></member>
+		<member name="M:Ab3d.Animator3ds.#ctor(Ab3d.Reader3ds)"><summary>
+            Constructor
+            </summary><param name="usedReader3ds">used Reader3ds</param></member>
+		<member name="M:Ab3d.Animator3ds.#ctor(Ab3d.Reader3ds,System.Double)"><summary>
+            Constructor
+            </summary><param name="usedReader3ds">used Reader3ds</param><param name="modelFramesPerSecond">ModelFramesPerSecond</param></member>
+		<member name="M:Ab3d.Animator3ds.#ctor(Ab3d.Reader3ds,System.TimeSpan)"><summary>
+            Constructor
+            </summary><param name="usedReader3ds">used Reader3ds</param><param name="animationDuration">AnimationDuration</param></member>
+		<member name="M:Ab3d.Animator3ds.GoToFrame(System.Double)"><summary>
+            Goes to the frameNo. This method can be called when the animation is running or when it is stopped.
+            </summary><param name="frameNo">frameNo</param><returns>Model3DGroup for the frameNo</returns></member>
+		<member name="M:Ab3d.Animator3ds.Reset"><summary>
+            Resets the animation and shows the first frame.
+            </summary></member>
+		<member name="M:Ab3d.Animator3ds.Stop"><summary>
+            Stops the animation. After stopping animation can continue from the current frame on - with just calling DoAnimate method.
+            </summary></member>
+		<member name="M:Ab3d.Animator3ds.DoAnimate"><summary>
+            The main method that does the animation. This method should be called every time user wants to show the next frame.
+            This method is usually called from a CompositionTarget.Rendering or DispatherTimerevent handler.
+            </summary><returns>returns Model3DGroup for the current frame</returns></member>
+		<member name="E:Ab3d.Animator3ds.FramesPerSecondUpdated"><summary>
+            Event that can be used to display the current frames per second.
+            </summary></member>
+		<member name="P:Ab3d.Animator3ds.ModelFramesPerSecond"><summary>
+            Gets or sets how many 3ds file frames per second are played - faster (bigger value) or slower (smaller value) animation.
+            Setting ModelFramesPerSecond also changes AnimationDuration accordingly.
+            Note that this is not the same as rendered frames per second that means more or less smooth animation.
+            Default value is 10
+            </summary></member>
+		<member name="P:Ab3d.Animator3ds.AnimationDuration"><summary>
+            Gets or sets the time in second how long will the whole animation be playing (once from the first to the last frame).
+            Setting this value also changes ModelFramesPerSecond accordingly.
+            </summary></member>
+		<member name="P:Ab3d.Animator3ds.AutoRepeat"><summary>
+            Gets or set if the animation should automatically repeat itself or not.
+            Default value is true.
+            </summary></member>
+		<member name="P:Ab3d.Animator3ds.AutoReverse"><summary>
+            Gets or sets if animation should go backwards when coming to the last frame or should it start from beginning.
+            Default value is false.
+            </summary></member>
+		<member name="P:Ab3d.Animator3ds.AverageFramesPerSecond"><summary>
+            Gets the average rendered frames per second. The value is calculated from the data in the last played animation.
+            </summary></member>
+		<member name="P:Ab3d.Animator3ds.LastFrame"><summary>
+            Gets the last rendered frame number
+            </summary></member>
+		<member name="T:Ab3d.Animator3ds.FramesPerSecondUpdatedEventHandler"><summary>
+            Event handler for getting the current frames per second
+            </summary><param name="sender">sender</param><param name="framesInLastSecond">current frames per second</param></member>
+		<member name="T:Ab3d.Common.Reader3ds.ResolvedTextureFile"><summary>
+            ResolvedTextureFile class is used with ResolveTextureFileCallback delegate to resolve the texture file.
+            </summary><remarks><para><b>ResolvedTextureFile</b> class is used with <see cref="F:Ab3d.Reader3ds.ResolveTextureFileCallback" /> delegate to resolve the texture file.
+            </para><para>
+            When Ab3d.Reader3ds calls the <see cref="F:Ab3d.Reader3ds.ResolveTextureFileCallback" /> delegate it creates an instance of <b>ResolvedTextureFile</b> and fills it with
+            the <b>OriginalFileName</b> that is a texture file name as it is written in 3ds file and the <b>ResolvedFileName</b> that is set to the recommended file name and its path.
+            </para><para>
+            The custom resolver method can change the <b>ResolvedFileName</b> or set the <b>IsTextureSkipped</b> to true to skip using this texture (if ResolvedFileName is null or empty the texture will be also skipped).
+            </para></remarks></member>
+		<member name="M:Ab3d.Common.Reader3ds.ResolvedTextureFile.#ctor(System.String,System.String)"><summary>
+            Constructor
+            </summary><param name="originalFileName">originalFileName</param><param name="recommendedFilePath">recommendedFilePath</param></member>
+		<member name="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.OriginalFileName"><summary>
+            Gets the texture file name as it is written in 3ds file.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.ResolvedFileName"><summary>
+            Gets or sets the file name with full path to the texture file name that will be used by WPF.
+            </summary></member>
+		<member name="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.IsTextureSkipped"><summary>
+            Gets or sets a boolean that specify if the texture is skipped (true) or not (false by default).
+            </summary></member>
+		<member name="T:Ab3d.Common.Visuals.VisualPositionType"><summary>
+            VisualPositionType defines the type of Position that is used in Model3ds.
+            </summary></member>
+		<member name="F:Ab3d.Common.Visuals.VisualPositionType.Center"><summary>
+            Objects center is used to position the 3D model.
+            </summary></member>
+		<member name="F:Ab3d.Common.Visuals.VisualPositionType.BottomCenter"><summary>
+            The 3D models will be placed above the Position coordinates.
+            </summary></member>
+		<member name="T:Ab3d.Controls.Viewport3ds"><summary>
+            Viewport3ds is a control that is derived from Viewport3D and can shows content of 3ds files.
+            </summary><remarks><para>
+            Viewport3ds is the most simple way to show 3D objects from 3ds file. With specifying the <see cref="P:Ab3d.Controls.Viewport3ds.Source" /> property to the Uri of the 3ds file the Viewport3ds will show the 3D models with lights from the 3ds file.
+            </para><para>
+            If the 3ds file also defines cameras, they are also used for the Viewport3ds. By the fault the first camera is used. With <see cref="P:Ab3d.Controls.Viewport3ds.CameraIndex" /> property it is possible to set other cameras.
+            </para><para>
+            Viewport3ds can play animations from 3ds file. 
+            This can be done manually with setting the <see cref="P:Ab3d.Controls.Viewport3ds.FrameNumber" /> property.
+            This property can be animated with DoubleAnimation. 
+            </para><para>
+            Animations can be also played automatically with simply setting <see cref="P:Ab3d.Controls.Viewport3ds.IsAnimated" /> property to true.
+            When animation is automatically played <see cref="P:Ab3d.Controls.Viewport3ds.AnimationDuration" />, <see cref="P:Ab3d.Controls.Viewport3ds.AutoRepeat" /> and <see cref="F:Ab3d.Controls.Viewport3ds.AutoReverseProperty" /> properties are used to control the animation.
+            </para></remarks><example><para>
+            The following xaml shows 3D models from the 'ab3d drop down.3DS' file and plays the animation defined in the 3ds file.
+            </para><code lang="xaml">
+            &lt;Page x:Class="Reader3dsSamples.Viewport3ds.Viewport3dsSample"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:controls3ds="clr-namespace:Ab3d.Controls;assembly=Ab3d.Reader3ds"&gt;
+            &lt;DockPanel&gt;
+                &lt;controls3ds:Viewport3ds Source="/Resources/ab3d drop down.3DS"
+                                         IsAnimated="True"
+                                         AutoRepeat="True"
+                                         AnimationDuration="0:0:10"/&gt;
+            &lt;/DockPanel&gt;
+            &lt;/Page&gt;
+            </code></example></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.reader3ds"><summary>
+            Ab3d.Reader3ds that is used to read 3ds file
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.fileStream"><summary>
+            Stream created from Source Uri that is used to read the 3ds file
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.SourceProperty"><summary>
+            SourceProperty
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.CameraIndexProperty"><summary>
+            CameraIndexProperty
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.FrameNumberProperty"><summary>
+            FrameNumberProperty
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.IsAnimatedProperty"><summary>
+            IsAnimatedProperty
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.AnimationDurationProperty"><summary>
+            AnimationDurationProperty
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.AutoRepeatProperty"><summary>
+            AutoRepeatProperty
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.AutoReverseProperty"><summary>
+            AutoReverseProperty
+            </summary></member>
+		<member name="M:Ab3d.Controls.Viewport3ds.#ctor"><summary>
+            Constructor
+            </summary></member>
+		<member name="M:Ab3d.Controls.Viewport3ds.Reload3dsFile"><summary>
+            Reloads 3ds file and recreates the models
+            </summary></member>
+		<member name="M:Ab3d.Controls.Viewport3ds.CreateFreeCamera(System.Windows.Media.Media3D.Model3DGroup)"><summary>
+            In case the camera is not defined we create a new one that is pointing to the center of read objects. This method can overriden to create a custom camera based on the read objects.
+            </summary></member>
+		<member name="F:Ab3d.Controls.Viewport3ds.isInitializing"><summary>
+            if true the Visual3D is initializing (between BeginInit and EndInit)
+            </summary></member>
+		<member name="M:Ab3d.Controls.Viewport3ds.BeginInit"><summary>
+            Starts the initialization process for this element.
+            </summary></member>
+		<member name="M:Ab3d.Controls.Viewport3ds.EndInit"><summary>
+            Indicates that the initialization process for the element is complete.
+            </summary></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.Source"><summary>
+            Gets or sets the Source of the 3ds file
+            </summary></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.CameraIndex"><summary>
+            Gets or sets the index of the used camera from the list of cameras defined in 3ds file
+            </summary></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.FrameNumber"><summary>
+            Gets or sets the frame number that is displayed by the Viewport3ds
+            </summary><remarks><note>PRO VERSION ONLY: Frame number can be set only in Pro version. In Basic version the first frame is always shown.</note></remarks></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.IsAnimated"><summary>
+            Gets or sets a Boolean value that specifies if the Viewport3ds is automatically playing the animation read from 3ds file.
+            </summary><remarks><note>PRO VERSION ONLY: IsAnimated can be set only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.AnimationDuration"><summary>
+            Gets or sets the time in second how long will the whole animation be playing (once from the first to the last frame).
+            </summary><remarks><note>PRO VERSION ONLY: AnimationDuration can be set only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.AutoRepeat"><summary>
+            Gets or set if the animation should automatically repeat itself or not.
+            Default value is true.
+            </summary><remarks><note>PRO VERSION ONLY: AutoRepeat can be set only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.AutoReverse"><summary>
+            Gets or sets if animation should go backwards when coming to the last frame or should it start from beginning.
+            Default value is false.
+            </summary><remarks><note>PRO VERSION ONLY: AutoReverse can be set only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Controls.Viewport3ds.UsedReader3ds"><summary>
+            Gets the Ab3d.Reader3ds instance that is used to read the 3ds file
+            </summary></member>
+		<member name="E:Ab3d.Controls.Viewport3ds.BeforeReading3dsFile"><summary>
+            BeforeReading3dsFile event occurs after the UsedReader3ds has been created and before the actual 3ds file has been read.
+            </summary><remarks><para>
+            The BeforeReading3dsFile is useful if you want to set some special properties on the <see cref="T:Ab3d.Reader3ds" /> object before it reads the 3ds file.
+            </para></remarks><example><para>
+            The following examples shows the BeforeReading3dsFile event handler that sets custom shading and custom DefaultMaterial.
+            </para><code>
+            private void Viewport3ds1_BeforeReading3dsFile(object sender, EventArgs e)
+            {
+                Viewport3ds1.UsedReader3ds.Shading = Ab3d.Reader3ds.ShadingType.Flat;
+                Viewport3ds1.UsedReader3ds.DefaultMaterial = new DiffuseMaterial(Brushes.Green);
+            }
+            </code></example></member>
+		<member name="E:Ab3d.Controls.Viewport3ds.AfterReading3dsFile"><summary>
+            AfterReading3dsFile event occurs after the 3ds file has been read.
+            </summary></member>
+		<member name="T:Ab3d.Reader3ds"><summary>
+             Ab3d.Reader3ds is a class library for importing 3D objects from 3ds files.
+             </summary><remarks><para>
+             It is possible to use Ab3d.Reader3ds in XAML or in code.
+             </para><para>
+             To use Reader3ds in <b>XAML</b> define the Reader3ds as Resource:
+             </para><code lang="xaml">
+             &lt;Page.Resources&gt;
+                 &lt;ab3d:Reader3ds x:Key="MyReader3ds" Source="/Resources/robotarm.3ds"/&gt;
+             &lt;Page.Resources&gt;
+             </code><para>
+             After defining the Reader3ds as resource it can be used with binding to its properties:
+             </para><code lang="xaml">
+             &lt;Viewport3D Camera="{Binding Source={StaticResource MyReader3ds}, Path=Cameras[0]}"&gt;
+                &lt;ModelVisual3D Content="{Binding Source={StaticResource MyReader3ds}, Path=RootModel3DGroup}"/&gt;
+             &lt;/Viewport3D&gt;
+             </code><para>
+             It is also possible to use 3D models from 3ds files with <see cref="T:Ab3d.Visuals.Model3ds" /> class.
+             </para><para>The most simple use of Reader3ds in <b>code</b> is with its static Instance property which returns an static instance of the Reader3ds. So you do no need to create your own instance of the class to use its methods So you can write:</para><code>
+             Ab3d.Reader3ds.Instance.ReadFile("sample_scene.3ds", myViewport);
+             </code><para>This code uses the <seealso cref="M:Ab3d.Reader3ds.ReadFile(System.String,System.Windows.Controls.Viewport3D)" /> that reads the sample_scene.3ds from the application folder and imports all the models, its materials and all the lights and adds them to myViewport. If there are any cameras defined in simple_scene.3ds the first camera is assigned to myViewport. myViewport can be defined in code:</para><code>
+             Viewport3D myViewport = new Viewport3D();
+             dockPanel1.Children.Add(myViewport);
+             </code>
+             or in XAML:
+             <code lang="xaml">
+             &lt;Viewport3D Name="myViewport"&gt;
+             &lt;/Viewport3D&gt;
+             </code><para>After the file has been read you can use all the public properties of the Reader3ds simply by accessing them with the Instance:</para><code>
+             GeometryModel3D head = Ab3d.Reader3ds.Instance.NamedObjects["head"] as GeometryModel3D;
+             </code><para>The upper code is using <see cref="P:Ab3d.Reader3ds.NamedObjects" /> to get the 3D objects named as "head" and sets a variable head with its GeometyModel3D.</para><para>3ds file can also contain animation data - with Reader3ds it is possible to get the simple animation data from 3ds file. For more see <seealso cref="M:Ab3d.Reader3ds.GetFrame(System.Int32,System.Windows.Controls.Viewport3D)" /></para></remarks><example>
+             For advanced use it is recommended to create an instance of Reader3ds - for example:
+             <code>
+             Ab3d.Reader3ds newReader3ds;
+             DiffuseMaterial defaultMaterial;
+             
+             defaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Green));
+             
+             newReader3ds = new Ab3d.Reader3ds();
+             newReader3ds.DefaultMaterial = defaultMaterial;
+             newReader3ds.TexturesPath = "c:\\textures";
+             
+             newReader3ds.ReadFile("c:\\models\\buttons.3ds", myViewport);
+             
+             Camera defaultCamera = newReader3ds.Cameras[0]; 
+             GeometryModel3D head = Ab3d.Reader3ds.Instance.NamedObjects["playButton"] as GeometryModel3D;
+             </code><para>The last line in the previous example gets the object that has been named as "playButton". This can be very useful because in 3D modeling application a name can be set for each of the objects. With <see cref="P:Ab3d.Reader3ds.NamedObjects" /> it is possible to get the <c>Model3DGroup</c>, <c>GeometryModel3D</c>, <c>Light</c> or <c>Camera</c> from the 3ds file. After this you can simply transform the object by using <seealso cref="T:Ab3d.Transformer3ds" />. You can also get all the named objects with its hierarchy - see <see cref="M:Ab3d.Reader3ds.DumpNamedObjects" /></para><para>Transforming (Translating, Scaling, Rotating) the read objects can be greatly simplified with <seealso cref="T:Ab3d.Transformer3ds">Ab3d.Transformer3ds</seealso> class. Reader3ds provides a <seealso cref="P:Ab3d.Reader3ds.Transformer">Transformer</seealso> property to get the instance of Transformer3ds for the current Reader3ds. Read class <seealso cref="T:Ab3d.Transformer3ds">description</seealso> for more info. The following samples demonstrates Transformer3ds usage:</para><code>
+             // Read robotarm.3ds into myViewport
+             Ab3d.Reader3ds.Instance.ReadFile("robotarm.3ds", myViewport);
+            
+             // Scales all the read objects by 10% (by factor 1.1)
+             Ab3d.Reader3ds.Instance.Transformer.ScaleObject(1.1, 1.1, 1.1);
+            
+             // Rotates the 3D object with name "BaseMotor" for 10 degrees around Y axis. 
+             // The rotation is additive (last parameter is true) - so the rotation does not replace the previous rotation but adds it to the previous rotation - useful for animation.
+             Ab3d.Reader3ds.Instance.Transformer.RotateObject("BaseMotor", new Vector3D(0, 1, 0), 10, true);
+             </code> 
+             The following example shows how to use CompositionTarget.Rendering event for creating a frame-base animation with Reader3ds and Animator3ds.
+             <code>
+             void StartAnimation()
+             {
+                 CompositionTarget.Rendering += new EventHandler(CompositionTarget_RenderingHandler);
+            
+                 Ab3d.Reader3ds.Instance.Animator.AnimationDuration = new TimeSpan(0, 0, 10); // 10 seconds
+            	    Ab3d.Reader3ds.Instance.ReadFile("SampleAnimation.3ds", myViewport);
+             }
+            
+             void EndAnimation()
+             {
+                 CompositionTarget.Rendering -= new EventHandler(CompositionTarget_RenderingHandler);
+            	    Ab3d.Reader3ds.Instance.Animator.Stop();
+             }     
+            
+             void CompositionTarget_Rendering(object sender, EventArgs e)
+             {
+                 Ab3d.Reader3ds.Instance.Animator.DoAnimate();
+             }
+             </code></example></member>
+		<member name="F:Ab3d.Reader3ds.AllModelsGroupName"><summary>
+            Key used in NamedObjects dictionary for Model3DGroup that contains all models
+            </summary>
+            For more info see <seealso cref="P:Ab3d.Reader3ds.NamedObjects" /></member>
+		<member name="F:Ab3d.Reader3ds.AllLightsGroupName"><summary>
+            Key used in NamedObjects dictionary for Model3DGroup that contains all lights
+            </summary>
+            For more info see <seealso cref="P:Ab3d.Reader3ds.NamedObjects" /></member>
+		<member name="F:Ab3d.Reader3ds.RootModelGroupName"><summary>
+            Model3DGroup that contains all models and lights - can also be accesses by RootModel3DGroup property
+            </summary>
+            For more info see <seealso cref="P:Ab3d.Reader3ds.NamedObjects" /></member>
+		<member name="F:Ab3d.Reader3ds.GroupNameSuffix"><summary>
+            Suffix used to name the object groups - for example if there is a GeometryModel3D object named "head" its group has name "head__Group"
+            </summary>
+            For more info see <seealso cref="P:Ab3d.Reader3ds.NamedObjects" /></member>
+		<member name="F:Ab3d.Reader3ds.DefaultMaterialName"><summary>
+            Name of the default material - used when there is no material defined
+            </summary></member>
+		<member name="M:Ab3d.Reader3ds.#ctor"><summary>
+            Constructor
+            </summary></member>
+		<member name="F:Ab3d.Reader3ds.ResolveTextureFileCallback"><summary>
+            Callback that can be used to resolve missing texture file name or all texture file names (if ResolveAllTextureFiles is set to true).
+            </summary><remarks><para>
+            With <b>ResolveTextureFileCallback</b> it is possible to get or change the texture file names.
+            </para><para>
+            When the <see cref="P:Ab3d.Reader3ds.ResolveAllTextureFiles" /> property is set to false (its default value), the <b>ResolveTextureFileCallback</b> is called only for missing texture files.
+            When it is set to true, the <b>ResolveTextureFileCallback</b> is called for every texture file name.
+            </para><para></para><para>
+            The callback method gets an instance of <see cref="T:Ab3d.Common.Reader3ds.ResolvedTextureFile" /> class as parameters. The class contains a read only <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.OriginalFileName" /> property and two read-write properties: <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.ResolvedFileName" /> and <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.IsTextureSkipped" />.
+            </para><para>
+            The <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.OriginalFileName" /> property contains the file name (without directory) that is written in 3ds file.
+            </para><para>
+            The <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.ResolvedFileName" /> property contains the full path with file name of the texture file.
+            The path is get from <see cref="P:Ab3d.Reader3ds.TexturesPath" /> property (if set) or from the location of the 3ds file. 
+            If the 3ds file is read from stream than only <see cref="P:Ab3d.Reader3ds.TexturesPath" /> property can be used.
+            The value of ResolvedFileName <b>can be changed</b> in the callback method. Its value will be used to create a BitmapImage that will be used to display the texture.
+            If the value is set to empty string or to null this is treated as the <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.IsTextureSkipped" /> property would be set to true. 
+            </para><para>
+            The <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.IsTextureSkipped" /> property can be set to true to skip the texture file and use null as a texture. If the model also have a color defined, it will be used for its Material.
+            </para><para></para><para>
+            If the textures in 3ds file are defined by some image formats that are not supported by WPF the Reader3ds tries to find the same file with gif or jpg file extention.
+            Because 3ds file format is quite old, some old 3ds files can contain textures defined in tga file format. The Reader3ds includes a tga file parser and can read the textures from tga files.
+            </para></remarks><example><para>
+            The following example shows how to use <b>ResolveTextureFileCallback</b> to collect and display the file names of missing textures.
+            </para><para>
+            Note that if <see cref="P:Ab3d.Reader3ds.ThrowMissingTextureException" /> is set to false (by default) it is not necessary to set the <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.IsTextureSkipped" /> to true for every missing texture file because there will be no exception thrown in this case. But if <see cref="P:Ab3d.Reader3ds.ThrowMissingTextureException" /> would be set to true, we would need to set the <see cref="P:Ab3d.Common.Reader3ds.ResolvedTextureFile.IsTextureSkipped" /> to true to prevent throwing exception.
+            </para><code>
+            private List&lt;string&gt; _missingTextures;
+            private Ab3d.Reader3ds _myReader3ds;
+            
+            public Model3DGroup Load3ds(string fileName)
+            {
+                Model3DGroup myModels;
+            
+                if (_myReader3ds == null)
+                    _myReader3ds = new Ab3d.Reader3ds();
+                    
+                _missingTextures = null;
+                
+                _myReader3ds.ResolveTextureFileCallback = ResolveMissingTextureFile;
+                myModels = _myReader3ds.ReadFile(fileName);
+                
+                return myModels;
+            }
+            
+            private void ResolveMissingTextureFile(Ab3d.Common.Reader3ds.ResolvedTextureFile resolvedTextureFile)
+            {
+                if (_missingTextures == null)
+                    _missingTextures = new List&lt;string&gt;();
+            
+                _missingTextures.Add(resolvedTextureFile.OriginalFileName);
+                
+                // skip the not found texture
+                resolvedTextureFile.IsTextureSkipped = true;
+            }
+            </code></example></member>
+		<member name="F:Ab3d.Reader3ds.SourceProperty"><summary>
+            SourceProperty
+            </summary></member>
+		<member name="M:Ab3d.Reader3ds.Read(System.String,System.Windows.Controls.Viewport3D,System.Int32)"><summary>
+            This method is obsolete - use <see cref="M:Ab3d.Reader3ds.ReadFile(System.String,System.Windows.Controls.Viewport3D,System.Int32)" /> instead.
+            </summary><param name="fileName">3ds fileName</param><param name="viewport">viewport to add the models to</param><param name="cameraIndex">if 0 or greater set the camera in Viewport3D to the camera with index from 3ds file; if -1 do not set the camera</param><returns>returns the read Model3DGroup</returns><overloads><summary>This method is obsolete - use <see cref="M:Ab3d.Reader3ds.ReadFile(System.String,System.Windows.Controls.Viewport3D,System.Int32)" /> instead.</summary></overloads></member>
+		<member name="M:Ab3d.Reader3ds.Read(System.String,System.Windows.Controls.Viewport3D)"><summary>
+            This method is obsolete - use <see cref="M:Ab3d.Reader3ds.ReadFile(System.String,System.Windows.Controls.Viewport3D)" /> instead.
+            </summary><param name="fileName">3ds fileName</param><param name="viewport">viewport to add the models to</param><returns>returns the read Model3DGroup</returns></member>
+		<member name="M:Ab3d.Reader3ds.Read(System.String)"><summary>
+            This method is obsolete - use <see cref="M:Ab3d.Reader3ds.ReadFile(System.String)" /> instead.
+            </summary><param name="fileName">3ds file name</param><returns>Model3DGroup with objects from 3ds file</returns></member>
+		<member name="M:Ab3d.Reader3ds.ReadFile(System.IO.Stream)"><summary>
+            Reads 3ds file from stream and returns its data in Model3DGroup object.
+            </summary><example>
+            The following example reads the 3ds file from a file stored in application's resources (in VS2005 marked as Resource - not Embedded resource). This can be very useful for creating a xbap applications.
+            <code>
+            Uri fileUri = new Uri("pack://application:,,,/SampleApp;component/models/testModel.3ds", UriKind.Absolute);
+            using (Stream stream = Application.GetResourceStream(fileUri).Stream)
+            {
+                Ab3d.Instance.ReadFile(stream, Viewport1);
+            }
+            </code></example><param name="fileStream">3ds file Stream</param><returns>read MeshGeometry3D object</returns><overloads><summary>Reads 3ds file from file or stream and returns its data in Model3DGroup object.</summary><example>
+            The following example reads the 3ds file from a file robotArm.3ds from temp directory and shows the 3D objects in Viewport1 Viewport3D.
+            <code>
+            Ab3d.Instance.ReadFile(@"c:\temp\robotArm.3ds", Viewport1);
+            </code>         
+            The following example reads the 3ds file from a file stored in application's resources (in VS2005 marked as Resource - not Embedded resource). This can be very useful for creating a xbap applications.
+            <code>
+            Uri fileUri = new Uri("pack://application:,,,/SampleApp;component/models/testModel.3ds", UriKind.Absolute);
+            using (Stream stream = Application.GetResourceStream(fileUri).Stream)
+            {
+                Ab3d.Instance.ReadFile(stream, Viewport1);
+            }
+            </code></example></overloads><exception cref="T:System.IO.FileFormatException" /><exception cref="T:Ab3d.Reader3ds.MissingTextureException" /></member>
+		<member name="M:Ab3d.Reader3ds.ReadFile(System.IO.Stream,System.Windows.Controls.Viewport3D)"><summary>
+            Reads the 3ds file from stream and adds the 3d objects (as MeshGeometry3D, Lights, Materials) to Viewport3D
+            Also if the 3ds file contains camera information set the Viewport3D's camera to the first camera in 3ds file
+            </summary><example>
+            The following example reads the 3ds file from a file stored in application's resources (in VS2005 marked as Resource - not Embedded resource). This can be very useful for creating a xbap applications.
+            <code>
+            Uri fileUri = new Uri("pack://application:,,,/SampleApp;component/models/testModel.3ds", UriKind.Absolute);
+            using (Stream stream = Application.GetResourceStream(fileUri).Stream)
+            {
+                Ab3d.Instance.ReadFile(stream, Viewport1);
+            }
+            </code></example><param name="fileStream">3ds file Stream</param><param name="viewport">viewport to add the models to</param><returns>returns the read Model3DGroup</returns><exception cref="T:System.IO.FileFormatException" /><exception cref="T:Ab3d.Reader3ds.MissingTextureException" /></member>
+		<member name="M:Ab3d.Reader3ds.ReadFile(System.IO.Stream,System.Windows.Controls.Viewport3D,System.Int32)"><summary>
+            Reads the 3ds file from stream and adds the 3d objects (as MeshGeometry3D, Lights, Materials) to Viewport3D
+            If cameraIndex &gt;= 0 than also sets the camera (if there is one in 3ds file) to Viewport3D
+            </summary><example>
+            The following example reads the 3ds file from a file stored in application's resources (in VS marked as Resource - not Embedded resource).
+            <code>
+            Uri fileUri = new Uri("pack://application:,,,/SampleApp;component/models/testModel.3ds", UriKind.Absolute);
+            using (Stream stream = Application.GetResourceStream(fileUri).Stream)
+            {
+                Ab3d.Instance.ReadFile(stream, Viewport1);
+            }
+            </code></example><param name="fileStream">3ds file Stream</param><param name="viewport">viewport to add the models to</param><param name="cameraIndex">if 0 or greater set the camera in Viewport3D to the camera with index from 3ds file; if -1 do not set the camera</param><returns>returns the read Model3DGroup</returns><exception cref="T:System.IO.FileFormatException" /><exception cref="T:Ab3d.Reader3ds.MissingTextureException" /></member>
+		<member name="M:Ab3d.Reader3ds.ReadFile(System.String,System.Windows.Controls.Viewport3D,System.Int32)"><summary>
+            Reads the 3ds file and adds the 3d objects (as MeshGeometry3D, Lights, Materials) to Viewport3D
+            If cameraIndex &gt;= 0 than also sets the camera (if there is one in 3ds file) to Viewport3D
+            </summary><param name="fileName">3ds fileName</param><param name="viewport">viewport to add the models to</param><param name="cameraIndex">if 0 or greater set the camera in Viewport3D to the camera with index from 3ds file; if -1 do not set the camera</param><returns>returns the read Model3DGroup</returns><exception cref="T:System.IO.FileFormatException" /><exception cref="T:Ab3d.Reader3ds.MissingTextureException" /></member>
+		<member name="M:Ab3d.Reader3ds.ReadFile(System.String,System.Windows.Controls.Viewport3D)"><summary>
+            Reads the 3ds file and adds the 3d objects (as MeshGeometry3D, Lights, Materials) to Viewport3D
+            Also if the 3ds file contains camera information set the Viewport3D's camera to the first camera in 3ds file
+            </summary><example>
+            The following example reads the 3ds file from a file robotArm.3ds from temp directory and shows the 3D objects in Viewport1 Viewport3D.
+            <code>
+            Ab3d.Instance.ReadFile(@"c:\temp\robotArm.3ds", Viewport1);
+            </code></example><param name="fileName">3ds fileName</param><param name="viewport">viewport to add the models to</param><returns>returns the read Model3DGroup</returns><exception cref="T:System.IO.FileFormatException" /><exception cref="T:Ab3d.Reader3ds.MissingTextureException" /></member>
+		<member name="M:Ab3d.Reader3ds.ReadFile(System.String)"><summary>
+            Reads 3ds file and returns its data in Model3DGroup object
+            </summary><param name="fileName">3ds file Name</param><returns>read MeshGeometry3D object</returns><exception cref="T:System.IO.FileFormatException" /><exception cref="T:Ab3d.Reader3ds.MissingTextureException" /></member>
+		<member name="M:Ab3d.Reader3ds.GetFrame(System.Int32,System.Windows.Controls.Viewport3D)"><summary>
+             Gets the Model3DGroup for frameNo
+             </summary><remarks>
+             The Reader3ds can also read the animation data from a 3ds file. It is possible to get the Model3DGroup object for each frame.
+             <note>
+             PRO VERSION ONLY: GetFrame can be used only in Pro version.
+             </note></remarks><example>
+             First you have to create a new instance of Reader3ds, read the file and than you can use the GetFrame method:
+             <code>
+             Reader3ds newReader3ds;
+             newReader3ds = new Reader3ds();
+             newReader3ds.ReadFile("c:\\models\\simple_animation.3ds");
+            
+             for (int frameNo=0; frameNo&lt;newReader3ds.FramesCount; frameNo++)
+             {
+                 newReader3ds.GetFrame(frameNo, Viewport1);
+                 System.Threading.Thread.Sleep(250); // 4 frames per second
+             }
+             </code></example><param name="frameNo">frameNo</param><param name="viewport">viewport where the Model3DGroup is shown</param><returns>returns the Model3DGroup for frameNo</returns><overloads><summary>
+             Gets the Model3DGroup for frameNo
+             </summary><remarks>
+             The Reader3ds can also read the animation data from a 3ds file. It is possible to get the Model3DGroup object for each frame.
+             <note>PRO VERSION ONLY: GetFrame can be used only in Pro version.</note></remarks><example>
+             First you have to create a new instance of Reader3ds, read the file and than you can use the GetFrame method:
+             <code>
+             Reader3ds newReader3ds;
+             newReader3ds = new Reader3ds();
+             newReader3ds.ReadFile("c:\\models\\simple_animation.3ds");
+            
+             for (int frameNo=0; frameNo&lt;newReader3ds.FramesCount; frameNo++)
+             {
+                 newReader3ds.GetFrame(frameNo, Viewport1);
+                 System.Threading.Thread.Sleep(250); // 4 frames per second
+             }
+             </code></example></overloads></member>
+		<member name="M:Ab3d.Reader3ds.GetFrame(System.Double,System.Windows.Controls.Viewport3D)"><summary>
+             Gets the Model3DGroup for frameNo. No The frameNo can also be a not integer value to display model between frames - for example frameNo = 1.5 will get the model as it it in the middle between 2st and 3nd frame.
+             </summary><remarks>
+             The Reader3ds can also read the animation data from a 3ds file. It is possible to get the Model3DGroup object for each frame.
+             <note>PRO VERSION ONLY: GetFrame can be used only in Pro version.</note></remarks><example>
+             First you have to create a new instance of Reader3ds, read the file and than you can use the GetFrame method:
+             <code>
+             Reader3ds newReader3ds;
+             newReader3ds = new Reader3ds();
+             newReader3ds.ReadFile("c:\\models\\simple_animation.3ds");
+            
+             for (int frameNo=0; frameNo&lt;newReader3ds.FramesCount; frameNo++)
+             {
+                 newReader3ds.GetFrame(frameNo, Viewport1);
+                 System.Threading.Thread.Sleep(250); // 4 frames per second
+             }
+             </code></example><param name="frameNo">frameNo</param><param name="viewport">viewport where the Model3DGroup is shown</param><returns>returns the Model3DGroup for frameNo</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetFrame(System.Int32,System.Windows.Controls.Viewport3D,System.Int32)"><summary>
+             Gets the Model3DGroup for frameNo. No The frameNo can also be a not integer value to display model between frames - for example frameNo = 1.5 will get the model as it it in the middle between 2st and 3nd frame.
+             </summary><remarks>
+             The Reader3ds can also read the animation data from a 3ds file. It is possible to get the Model3DGroup object for each frame.
+             <note>PRO VERSION ONLY: GetFrame can be used only in Pro version.</note></remarks><example>
+             First you have to create a new instance of Reader3ds, read the file and than you can use the GetFrame method:
+             <code>
+             Reader3ds newReader3ds;
+             newReader3ds = new Reader3ds();
+             newReader3ds.ReadFile("c:\\models\\simple_animation.3ds");
+            
+             for (int frameNo=0; frameNo&lt;newReader3ds.FramesCount; frameNo++)
+             {
+                 newReader3ds.GetFrame(frameNo, Viewport1);
+                 System.Threading.Thread.Sleep(250); // 4 frames per second
+             }
+             </code></example><param name="frameNo">frameNo</param><param name="viewport">viewport where the Model3DGroup is shown</param><param name="cameraIndex">if 0 or greater set the camera in Viewport3D to the camera with index from 3ds file; if -1 do not set the camera</param><returns>returns the Model3DGroup for frameNo</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetFrame(System.Double,System.Windows.Controls.Viewport3D,System.Int32)"><summary>
+             Gets the Model3DGroup for frameNo. No The frameNo can also be a not integer value to display model between frames - for example frameNo = 1.5 will get the model as it it in the middle between 2st and 3nd frame.
+             </summary><remarks>
+             The Reader3ds can also read the animation data from a 3ds file. It is possible to get the Model3DGroup object for each frame.
+             <note>PRO VERSION ONLY: GetFrame can be used only in Pro version.</note></remarks><example>
+             First you have to create a new instance of Reader3ds, read the file and than you can use the GetFrame method:
+             <code>
+             Reader3ds newReader3ds;
+             newReader3ds = new Reader3ds();
+             newReader3ds.ReadFile("c:\\models\\simple_animation.3ds");
+            
+             for (int frameNo=0; frameNo&lt;newReader3ds.FramesCount; frameNo++)
+             {
+                 newReader3ds.GetFrame(frameNo, Viewport1);
+                 System.Threading.Thread.Sleep(250); // 4 frames per second
+             }
+             </code></example><param name="frameNo">frameNo</param><param name="viewport">viewport where the Model3DGroup is shown</param><param name="cameraIndex">if 0 or greater set the camera in Viewport3D to the camera with index from 3ds file; if -1 do not set the camera</param><returns>returns the Model3DGroup for frameNo</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetFrame(System.Int32)"><summary>
+             Gets the Model3DGroup for frame. No The frameNo can also be a not integer value to display model between frames - for example frameNo = 1.5 will get the model as it it in the middle between 2st and 3nd frame.
+             </summary><remarks>
+             The Reader3ds can also read the animation data from a 3ds file. It is possible to get the Model3DGroup object for each frame.
+             <note>PRO VERSION ONLY: GetFrame can be used only in Pro version.</note></remarks><example>
+             First you have to create a new instance of Reader3ds, read the file and than you can use the GetFrame method:
+             <code>
+             Reader3ds newReader3ds;
+             newReader3ds = new Reader3ds();
+             newReader3ds.ReadFile("c:\\models\\simple_animation.3ds");
+            
+             for (int frameNo=0; frameNo&lt;newReader3ds.FramesCount; frameNo++)
+             {
+                 newReader3ds.GetFrame(frameNo, Viewport1);
+                 System.Threading.Thread.Sleep(250); // 4 frames per second
+             }
+             </code></example><param name="frameNo">frameNo</param><returns>returns the Model3DGroup for frameNo</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetFrame(System.Double)"><summary>
+             Gets the Model3DGroup for frameNo. The frameNo can also be a not integer value to display model between frames - for example frameNo = 1.5 will get the model as it it in the middle between 2st and 3nd frame.
+             </summary><remarks>
+             The Reader3ds can also read the animation data from a 3ds file. It is possible to get the Model3DGroup object for each frame.
+             <note>PRO VERSION ONLY: GetFrame can be used only in Pro version.</note></remarks><example>
+             First you have to create a new instance of Reader3ds, read the file and than you can use the GetFrame method:
+             <code>
+             Reader3ds newReader3ds;
+             newReader3ds = new Reader3ds();
+             newReader3ds.ReadFile("c:\\models\\simple_animation.3ds");
+            
+             for (int frameNo=0; frameNo&lt;newReader3ds.FramesCount; frameNo++)
+             {
+                 newReader3ds.GetFrame(frameNo, Viewport1);
+                 System.Threading.Thread.Sleep(250); // 4 frames per second
+             }
+             </code></example><param name="frameNo">frameNo. Note: The frameNo can also be a not integer value to display model between frames - for example frameNo = 1.5 will get the model as it it in the middle between 2st and 3nd frame.</param><returns>returns the Model3DGroup for frameNo</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetCameraForFrame(System.Int32,System.Double)"><summary>
+            Gets the camera with index cameraIndex for the frameNo.
+            Note: frameNo is double - so it is possible to create smoother animation with getting the positions within frames. See GetFrame for more details.
+            </summary><remarks><note>PRO VERSION ONLY: GetCameraForFrame with frameNo bigger than 0 can be used only in Pro version.</note></remarks><param name="cameraIndex">cameraIndex</param><param name="frameNo">frameNo is double - so it is possible to create smoother animation with getting the positions within frames</param><returns>Camera</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetXaml"><summary>
+            Gets the XAML of the last read objects with default settings. If Viewport3D 
+            </summary><returns>XAML text</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetXaml(System.String)"><summary>
+            Gets the XAML of the objectName from the last read objects with default settings.
+            </summary><param name="objectName">Name of the object from NamedObjects dictionary</param><returns>XAML text</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetXaml(Ab3d.Common.Reader3ds.WpfXamlWriterSettings)"><summary>
+            Gets the XAML of the last read objects with custom settings.
+            </summary><param name="settings">Settings as WpfXamlWriterSettings that specify how the XAML will be formated</param><returns>XAML text</returns></member>
+		<member name="M:Ab3d.Reader3ds.GetXaml(Ab3d.Common.Reader3ds.WpfXamlWriterSettings,System.String)"><summary>
+            Gets the XAML of the objectName from the last read objects with custom settings.
+            </summary><param name="settings">Settings as WpfXamlWriterSettings that specify how the XAML will be formated. If null a default settings will be used.</param><param name="objectName">Name of the object from NamedObjects dictionary</param><returns>XAML text</returns></member>
+		<member name="M:Ab3d.Reader3ds.DumpNamedObjects"><summary>
+            If run in immediate window the method displays the hierarchy of all objects, lights and Model3DGroups in this instance of Reader3ds.
+            To get the NamedObjects description text use GetNamedObjectsText() method.
+            </summary></member>
+		<member name="M:Ab3d.Reader3ds.GetNamedObjectsText"><summary>
+            Returns a hierarchy text of all objects, lights and Model3DGroups in this instance of Reader3ds. Used in DumpNamedObjects which displays the hierarchy of named objects (when run in immediate window).
+            </summary><returns>hierarchy of all objects as string</returns></member>
+		<member name="F:Ab3d.Reader3ds.isInitializing"><summary>
+            if true the Visual3D is initializing (between BeginInit and EndInit)
+            </summary></member>
+		<member name="M:Ab3d.Reader3ds.BeginInit"><summary>
+            Signals the line 3D that initialization is starting.
+            </summary></member>
+		<member name="M:Ab3d.Reader3ds.EndInit"><summary>
+            Signals the line 3D that initialization is complete.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.RootModel3DGroup"><summary>
+            The root Model3DGroup from the last read 3ds file.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.Cameras"><summary>
+            Gets list of all the cameras read from 3ds file.
+            Used because Model3DGroup can have only one camera defined, but 3ds file can have more then one.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.Lights"><summary>
+            Gets list of all the lights read from 3ds file.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.DefaultMaterial"><summary>
+            Gets or Sets the material that will be applied to the read objects if the object does not have its own material set.
+            Default value is Silver SolidColorBrush.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.TexturesPath"><summary>
+            Gets or sets the path where the textures are located. If null or "" the path of the 3ds file is used.
+            It is also possible to set TexturesPath to url of the textures (http://...) or to the application resources ("pack://application:,,,/XAMLBrowserApplication1;component/models")
+            Default value is null.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.MissingTextureFileName"><summary>
+            Gets or sets the file name with full path of the image that will be used when the texture image is not present.
+            Default value is null.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.ThrowMissingTextureException"><summary>
+             Gets or sets if Reader3ds.MissingTextureExeprion is thrown if the texture is not found.
+             If false then if the MissingTextureFileName is set it is used, if not set the simple SolidColorBrush material is used instead of texture (color is read from material).
+             Default value is false.
+             </summary><remarks><para><b>ThrowMissingTextureException is obsolete.</b></para><para>
+             The property can be still used but it is recommended to use <see cref="F:Ab3d.Reader3ds.ResolveTextureFileCallback" /> and <see cref="P:Ab3d.Reader3ds.ResolveAllTextureFiles" /> instead. With their usage it is not needed to read the file twice to get the missing texture file and also it is possible to get all the missing files and not just the first one.
+             </para><para>This property can be used in a viewer application when an exception must be shown if the texture file is not found. The exception is of type MissingTextureException that has the MissingTextureFileName property with missing file name. The following code is a sample of using ThrowMissingTextureException (the same code can also be found in my Viewer3d):</para><code>
+             Ab3d.Reader3ds newReader3ds;
+             Model3DGroup buttonModel3DGroup;
+            
+             newReader3ds = new Ab3d.Reader3ds();
+             newReader3ds.ThrowMissingTextureException = true;
+            
+             try
+             {
+                 buttonModel3DGroup = newReader3ds.ReadFile("c:\\models\\button.3ds");
+             }
+             catch (Reader3ds.MissingTextureException e)
+             {
+                 MessageBox.Show("Missing texture: " + e.MissingTextureFileName);
+                 newReader3ds.ThrowMissingTextureException = false;
+                 buttonModel3DGroup = newReader3ds.ReadFile("c:\\models\\button.3ds");
+             }
+             </code><para>The first time the Reader3ds is used the ThrowMissingTextureException is set to true. If the 3ds file has a missing texture the MissingTextureException is caught in catch. The missing file name is read and user can be informed about it. Then the ThrowMissingTextureException is set to false and the file is read again. This time the exception is not thrown and the model can be read.</para><para>Materials with textures have its Brush property set to the ImageBrush. But if the texture is not found a SolidColorBrush is used instead.</para></remarks></member>
+		<member name="P:Ab3d.Reader3ds.ResolveAllTextureFiles"><summary>
+            Gets or sets a Boolean that specifies if all texture files are resolved with ResolveTextureFileCallback (if value is true). If false (by default) the ResolveTextureFileCallback is called only for the missing texture files.
+            </summary><remarks><para>
+            When <b>ResolveAllTextureFiles</b> is set to true, than the <see cref="F:Ab3d.Reader3ds.ResolveTextureFileCallback" /> is called for every texture file defined in the read 3ds file.
+            </para><para>
+            When <b>ResolveAllTextureFiles</b> is set to false (by default), than the <see cref="F:Ab3d.Reader3ds.ResolveTextureFileCallback" /> is called <b>only for missing</b> texture files. See also <seealso cref="F:Ab3d.Reader3ds.ResolveTextureFileCallback" /> for more information how Reader3ds tries to find the texture file and when the file is marked as missing.
+            </para></remarks></member>
+		<member name="P:Ab3d.Reader3ds.AddDefaultLight"><summary>
+            Add default light (Direction=0, 0, -1) if there are no lights defined in 3ds file.
+            Default value is false.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.ImportSpecularMaterial"><summary>
+            Gets or sets if the SpeculaMaterial is imported - used. If false DiffuseMaterial is always used.
+            </summary><remarks><note>PRO VERSION ONLY: ImportSpecularMaterial can be set only in Pro version.</note><para>With setting ImportSpecularMaterial to false SpecularMaterial is not used - only a DiffuseMaterial is used.</para><para>Because in WPF it is possible to define only SpecularPower (in 3ds file there is also SpecularSize) the shines effect can be sometimes too strong - in this cases it is better not to use SpecularMaterial. </para></remarks></member>
+		<member name="P:Ab3d.Reader3ds.ImportCameras"><summary>
+            Gets or sets if Cameras are imported.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.ImportLights"><summary>
+            Gets or sets if Lights are imported.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.ForceTwoSidedMaterials"><summary>
+            If true than all the GeometryModels have both Material and BackMaterial set. This means that all the TriangleIndices can be visible from both sides. 
+            </summary><remarks><note>PRO VERSION ONLY: ForceTwoSidedMaterials can be set only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Reader3ds.DisableTransparencies"><summary>
+            Gets or sets if Transparencies are used in Materials or not.
+            </summary><remarks><note>PRO VERSION ONLY: DisableTransparencies can be set only in Pro version.</note><para>If true transparent materials are not used - In this case all transparent materials are made non-transparent - Opacity is set to 1.</para><para>This can be useful because WPF sometimes does not render the transparent objects correctly. If you have problems with transparent object I recommend that you try to put all the transparent objects to be the last objects in the 3ds file so the transparent objects will be rendered last. If this does not work set this property to true. </para></remarks></member>
+		<member name="P:Ab3d.Reader3ds.Shading"><summary>
+            Defines the smoothing type that is applied to objects. 
+            Default value is SmoothingGroups that uses the Smoothing Groups values stored in 3ds file to define which edges are smooth and which are flat.
+            The SmoothingGroups value produces the results as in the 3d model designer. However if you wish to force the flat or smooth looking objects choose either Flat or Smooth. Also if performance is much more important than rendering quality choose None. 
+            </summary><remarks><note>PRO VERSION ONLY: Shading can be set only in Pro version. In Basic version ShadingType.SmoothingGroups is always used.</note></remarks></member>
+		<member name="P:Ab3d.Reader3ds.UseModelTransforms"><summary>
+            Default is false. If true than the TranslateTransform3D, ScaleTransform3D and RotateTransform3D are applied to each GeometryModel3D as they were applied in 3D modeling application.
+            If false than the positions are already fully transformed. Setting it to true can be used to get different transformations for each frames.
+            </summary><remarks><note>PRO VERSION ONLY: UseModelTransforms can be set only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Reader3ds.NamedObjects"><summary><para>Gets the Dictionary that can be used to access all the objects in 3ds file by its name as defined in 3d modeling application.</para></summary><remarks><para>This dictionary contains object names as keys and their corresponding GeometryModel3D as values. So if you wish to change the specific object, its material or add a custom transformation you can access the GeometryModel3D with its name that is defined in 3D modeling application.</para><note>PRO VERSION ONLY: object names are read only in Pro version.</note><note type="caution">In 3ds file the names can be only 10 characters long - so if you have defined names longer than 10 characters it is recommended to use DumpNamedObjects() in immediate window to see the names as in 3ds file.</note><note>
+            If the object has been split because multiple materials are used for one mesh object, new objects have been added and can be accessed with the key: [original_object_name]_[material_name] - for example: "head" object can be split into: "head_material1", "head_material2". 
+            </note><para>The simplest way to get all the named objects is place a breakpoint after the 3ds file has been read and in Visual Studio in immediate window execute the <seealso cref="M:Ab3d.Reader3ds.DumpNamedObjects" /> method on the Reader3ds instance.</para></remarks><example>This example firstly gets a GeometryModel3D named as "head". Than the light with name "main light" is get. And finally the collection of all modes without lights is get:
+            <code>
+            GeometryModel3D objectHead = humanReader3ds.NamedObjects["Head"] as GeometryModel3D;
+            SpotLight objectHead = humanReader3ds.NamedObjects["MainLight"] as SpotLight;
+            Model3DGroup objectHead = humanReader3ds.NamedObjects[Reader3ds.AllModelsGroupName] as Model3DGroup;
+            </code></example></member>
+		<member name="P:Ab3d.Reader3ds.Materials"><summary>
+            Gets the Dictionary that can be used to access all the materials defined in 3ds by their name.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.FramesCount"><summary>
+            Number of frames in the read 3ds file. If FramesCount is 1 than the 3ds file does not contain animation data but only one static frame.
+            To get the index of the last frame you have to subtract 1 from the FramesCount. For example if the last animation takes place from frame 0 to frame 30, than the FramesCount will return 31.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.CurrentFrameNumber"><summary>
+            Gets the current frame number that was get by the GetFrame method.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.IsCameraAnimated"><summary>
+            Gets a Boolean that specifies if the 3ds file defined camera animation.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.DisableTextureOffset"><summary>
+            If set to true than texture offsets and scales are not processed. The default value is true, because many times the textures are not shown correctly if offsets and scales data from 3ds are used.
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.Transformer"><summary>
+            Gets and instance of a <seealso cref="T:Ab3d.Transformer3ds">Transformer3ds</seealso> created with this Reader3ds.
+            Transformer3ds is a helper class that helps animate and transform (rotate, scale and translate) the objects read with Reader3ds.
+            </summary><remarks><note>PRO VERSION ONLY: Transformer can be used only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Reader3ds.Animator"><summary>
+            Gets and instance of a Animator3ds created with this Reader3ds.
+            </summary><remarks><note>PRO VERSION ONLY: Animator can be used only in Pro version.</note></remarks></member>
+		<member name="P:Ab3d.Reader3ds.UseOldCoordinateAxis"><summary>
+            The previous version has wrongly convert position from 3ds coordinate system to wpf coordinate system. The difference is that the x axis now points to the right instead of the left and the z axis points to the viewer and not away from it.
+            This version by default uses new coordinate system, but if your application depends on the old one, you can simple set this property to true. But note that this can only be a temporary solution.
+            <note type="caution">Please note that this property is marked as obsolete and is valid only for backward compatibility and will be removed after version 4.2</note></summary></member>
+		<member name="P:Ab3d.Reader3ds.TargetViewport"><summary>
+            Gets the target Viewport3D that was used with ReadFile, GetFrame, etc.
+            </summary></member>
+		<member name="E:Ab3d.Reader3ds.ProgressChanged"><summary>
+            ProgressChanged event can be used to get notifications of how much the 3ds file has been read.
+            </summary><remarks><para><b>ProgressChanged</b> event can be used to get notifications of how much the 3ds has been read.
+            </para><para>
+            Please note that in order to show changes with the progress bar, it should be shown on another thread and not on the thread where the Reader3ds is working.
+            </para></remarks></member>
+		<member name="P:Ab3d.Reader3ds.Source"><summary>
+            Gets or sets the Source of the 3ds file.
+            </summary><remarks><para>
+            This property is used when Reader3ds is used as Resource.
+            </para><para>
+            To read a file from code use <see cref="M:Ab3d.Reader3ds.ReadFile(System.String,System.Windows.Controls.Viewport3D)" /> or other ReadFile methods.
+            </para><para>
+            It is also possible to use 3D models from 3ds files with <see cref="T:Ab3d.Visuals.Model3ds" /> class.
+            </para></remarks><example><para>
+            The following sample shows how to use Reader3ds as resource:
+            </para><code lang="xaml">
+            &lt;Page.Resources&gt;
+                &lt;ab3d:Reader3ds x:Key="MyReader3ds" Source="/Resources/robotarm.3ds"/&gt;
+            &lt;Page.Resources&gt;
+            </code><para>
+            After defining the Reader3ds as resource it can be used with binding to its properties:
+            </para><code lang="xaml">
+            &lt;Viewport3D Camera="{Binding Source={StaticResource MyReader3ds}, Path=Cameras[0]}"&gt;
+               &lt;ModelVisual3D Content="{Binding Source={StaticResource MyReader3ds}, Path=RootModel3DGroup}"/&gt;
+            &lt;/Viewport3D&gt;
+            </code></example></member>
+		<member name="E:Ab3d.Reader3ds.ReadingComplete"><summary>
+            Event that is raised when the reading of 3ds file is complete
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.Instance"><summary>
+            Gets static instance of Reader3ds so you do not need to create your own instance of it.
+            </summary><example><para>Usage: you can simply use:</para><code>myModel3DGroup = Ab3d.Reader3ds.Instance.ReadFile(fileName);</code><para>After reading file you can also access its properties through Instance. For example:</para><code>myGeometryModel3D = Ab3d.Reader3ds.Instance.NamedObjects["head"] as GeometryModel3D;</code></example></member>
+		<member name="P:Ab3d.Reader3ds.LicenseInfo"><summary>
+            License information
+            </summary></member>
+		<member name="T:Ab3d.Reader3ds.ResolveTextureFileDelegate"><summary>
+            ResolveTextureFileDelegate describes the delegate that is used to resolve the path to the texture file.
+            </summary><param name="resolvedTextureFile">texture file information of type Ab3d.Common.Reader3ds.ResolvedTextureFile</param></member>
+		<member name="T:Ab3d.Reader3ds.MissingTextureException"><summary>
+            Exception thrown when a texture file is missing and ThrowMissingTextureException is true
+            </summary></member>
+		<member name="M:Ab3d.Reader3ds.MissingTextureException.#ctor(System.String,System.String)"><summary>
+            Constructor
+            </summary><param name="missingTextureFileName">missingTextureFileName</param><param name="missingTextureFullFileName">missingTextureFullFileName</param></member>
+		<member name="P:Ab3d.Reader3ds.MissingTextureException.MissingTextureFileName"><summary>
+            File name of the missing texture
+            </summary></member>
+		<member name="P:Ab3d.Reader3ds.MissingTextureException.MissingTextureFullFileName"><summary>
+            Gets the file name and its path of the missing texture.
+            </summary></member>
+		<member name="T:Ab3d.Reader3ds.ShadingType"><summary>
+            Defines the smoothing types that is applied to objects. Default value is SmoothingGroups.
+            </summary></member>
+		<member name="F:Ab3d.Reader3ds.ShadingType.None"><summary>
+            No special shading is applied to the objects. This is the fastest option. Objects usually look smooth but because it is not necessary that all positions are unique, the rendered objects can have some "anomalies". Choose this option only if performance is much more important than rendering quality or if you wish to create the same output as previous versions of Reader3ds (verson 4.1 and below).
+            </summary></member>
+		<member name="F:Ab3d.Reader3ds.ShadingType.Flat"><summary>
+            All read objects appear flat shaded - all the edges are sharp and not smooth - as a cube Usually this is not necessary because SmoothingGroups already contains information about which edges are sharp and which are smooth. In general SmoothingGroups should provide the best results. This option can be chosen to force the flat look. 
+            </summary></member>
+		<member name="F:Ab3d.Reader3ds.ShadingType.Smoooth"><summary>
+            All read objects appear smooth - there are no sharp edges - as a sphere. Usually this is not necessary because SmoothingGroups already contains information about which edges are sharp and which are smooth. In general SmoothingGroups should provide the best results. This option can be chosen to force the smooth look. 
+            </summary></member>
+		<member name="F:Ab3d.Reader3ds.ShadingType.SmoothingGroups"><summary>
+            Default value. This options uses the SmoothingGroups values stored in 3ds file to define which edges are smooth and which are flat. This options produces the results as in the 3d model designer. However if you wish to force the flat or smooth looking objects choose either Flat or Smooth. Also if performance is much more important than rendering quality choose None.
+            </summary></member>
+		<member name="T:Ab3d.Transformer3ds"><summary>
+             Transformer3ds is a helper class that helps animate and transform (rotate, scale and translate) the objects read with Reader3ds.
+             </summary><remarks><note>PRO VERSION ONLY: Transformer3ds can be used only in Pro version.</note><para>Objects read with <seealso cref="T:Ab3d.Reader3ds" /> can be hierarchically organized and can already contain a Matrix3DTransform that must not be overridden Because of this additional transformations of the objects can be a little bit tricky. Also when adding a transformation (rotation, scale or translate) it is possible that the object already contains a different transformation so a new <c>Transform3DGroup</c> must be added to the object.</para><para>The methods in Transformer3ds can greatly simplify transforming the objects read with Reader3ds. Firstly we need to create an instance of <c>Transformer3ds</c> and put a Reader3ds instance as a parameter to the constructor. Main methods in the class are: 
+             <see cref="M:Ab3d.Transformer3ds.RotateObject(System.Windows.Media.Media3D.Vector3D,System.Double)" />, <see cref="M:Ab3d.Transformer3ds.ScaleObject(System.Double,System.Double,System.Double)" />, <see cref="M:Ab3d.Transformer3ds.TranslateObject(System.Double,System.Double,System.Double)" />.</para><para>Each of those methods can takes an objectName as a first parameter - the name from the Reader3ds's <see cref="P:Ab3d.Reader3ds.NamedObjects" />. The transformation will happen this object. If this parameter is omitted, than all the objects read with specified Reader3ds are transformed.</para><para>Than there are parameters to define the transformation - for example <c>Vector3D objectRotationAxis</c> and <c>double objectRotationAngle</c></para><para>Also <c>isAdditive</c> parameter can be used - if true that means that the applied transformation will be added to the currently applied transformation and will not replace the current one. For example if we specify 5.0 for <c>objectRotationAngle</c> and set true for <c>isAdditive</c> than the rotation angle will be increased for 5 degrees.</para><para></para><list type="bullet"><listheader><description>There are also other helper methods for:</description></listheader><item><description>clearing the applied transformations (<see cref="M:Ab3d.Transformer3ds.ClearAllTransformations" /> and <see cref="M:Ab3d.Transformer3ds.ClearTransformations(System.String)" />)</description></item><item><description>getting the current transformation (<see cref="M:Ab3d.Transformer3ds.GetObjectRotation(System.String)" />, <see cref="M:Ab3d.Transformer3ds.GetObjectScale(System.Windows.Media.Media3D.Model3D)" /> and <see cref="M:Ab3d.Transformer3ds.GetObjectTranslation(System.String)" />)</description></item><item><description>helping with getting objects in hierarchy (<see cref="M:Ab3d.Transformer3ds.HasChildren(System.String)" />, <see cref="M:Ab3d.Transformer3ds.GetChildren(System.String)" />, <see cref="M:Ab3d.Transformer3ds.GetParentGroup(System.String)" /> and <see cref="M:Ab3d.Transformer3ds.GetObjectOrItsGroup(System.String)" />)</description></item><item><description>other helper methods (<see cref="M:Ab3d.Transformer3ds.GetObjectSize(System.Windows.Media.Media3D.Model3D)" /> and <see cref="M:Ab3d.Transformer3ds.GetObjectCenter(System.Windows.Media.Media3D.Model3D)" />)</description></item></list></remarks><example>
+             The following example reads a 3ds file and applies some transformation on its objects (sample is get from RobotArm sample available on http://www.wpf-graphics.com):
+             <code>
+             Ab3d.Reader3ds robotArmReader3ds = new Ab3d.Reader3ds();
+             robotArmReader3ds.ReadFile("robotarm.3DS", Viewport1);
+             
+             Ab3d.Transformer3ds robotArmTransformer = new Ab3d.Transformer3ds(robotArmReader3ds);
+             
+             robotArmTransformer.RotateObject("BaseMotor", new AxisAngleRotation3D(new Vector3D(0, 1, 0), 10));
+             robotArmTransformer.RotateObject("Joint2", new AxisAngleRotation3D(new Vector3D(0, 0, 1), 45));
+             robotArmTransformer.TranslateObject("Hand3", -10, 0, 0);
+             </code>
+             The following example rotates all the objects read with robotArmReader3ds (RotateObject is called without ObjectName parameter):
+             <code>
+             robotArmTransformer.Transformer.RotateObject(new AxisAngleRotation3D(new Vector3D(0, 0, 1), 45));
+             </code>
+             Note that the Transformer3ds can be also used with Reader3ds's <seealso cref="P:Ab3d.Reader3ds.Transformer">Transformer</seealso> property, for example:
+             <code>
+             robotArmReader3ds.RotateObject("BaseMotor", new Vector3D(0, 1, 0), 10, 10));
+             </code>
+             There is an even simpler way:
+             <code>
+             // Read robotarm.3ds into myViewport
+             Ab3d.Reader3ds.Instance.ReadFile("robotarm.3ds", myViewport);
+            
+             // Scales all the read objects by 10% (by factor 1.1)
+             Ab3d.Reader3ds.Instance.Transformer.ScaleObject(1.1, 1.1, 1.1);
+            
+             // Rotates the 3D object with name "BaseMotor" for 10 degrees around Y axis. 
+             // The rotation is additive (last parameter is true) - so the rotation does not replace the previous rotation but adds it to the previous rotation - usefull for animation.
+             Ab3d.Reader3ds.Instance.Transformer.RotateObject("BaseMotor", new AxisAngleRotation3D(new Vector3D(0, 1, 0), 10), true);
+             </code></example></member>
+		<member name="M:Ab3d.Transformer3ds.#ctor(Ab3d.Reader3ds)"><summary>
+            Constructor
+            </summary><param name="usedReader3ds"></param></member>
+		<member name="M:Ab3d.Transformer3ds.ClearTransformations(System.String)"><summary>
+            Clears all transformation in objectName (only MatrixTransformations are left because they are needed to represent the hierarchy of read 3ds file) 
+            </summary><param name="objectName">objectName from NamedObjects</param></member>
+		<member name="M:Ab3d.Transformer3ds.ClearTransformations(System.Windows.Media.Media3D.Model3D)"><summary>
+            Clears all transformation in objectsGroup (only MatrixTransformations are left because they are needed to represent the hierarchy of read 3ds file) 
+            </summary><param name="objectsGroup">objectsGroup</param></member>
+		<member name="M:Ab3d.Transformer3ds.ClearAllTransformations"><summary>
+            Clears all transformation in all objects in UsedReader3ds
+            </summary></member>
+		<member name="M:Ab3d.Transformer3ds.ApplyTransformation(System.Windows.Media.Media3D.Model3D,System.Windows.Media.Media3D.Transform3D)"><summary>
+            Applies the newTransformation to the modelToApplyTransformtion. 
+            If the model already has the same type of transformation than this transformation is replaced with the new one.
+            If this type of transformation is not already applied to the models than the transformation is added to model's Transform3DGroup
+            </summary><param name="modelToApplyTransformtion">modelToApplyTransformtion</param><param name="newTransformation">newTransformation</param></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectRotation(System.String)"><summary>
+            Gets a RotateTransform3D for the object with objectName - if there is a Transform3DGroup the RotateTransform3D is get from it
+            </summary><param name="objectName">objectName from NamedObjects</param><returns>RotateTransform3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectRotation(System.Windows.Media.Media3D.Model3D)"><summary>
+            Gets a RotateTransform3D for the model - if there is a Transform3DGroup the RotateTransform3D is get from it
+            </summary><param name="model">model</param><returns>RotateTransform3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectScale(System.Windows.Media.Media3D.Model3D)"><summary>
+            Gets a ScaleTransform3D for the model - if there is a Transform3DGroup the RotateTransform3D is get from it
+            </summary><param name="model">model</param><returns>ScaleTransform3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectScale(System.String)"><summary>
+            Gets a ScaleTransform3D for the object with objectName - if there is a Transform3DGroup the RotateTransform3D is get from it
+            </summary><param name="objectName">objectName</param><returns>ScaleTransform3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectTranslation(System.Windows.Media.Media3D.Model3D)"><summary>
+            Gets a TranslateTransform3D for the model - if there is a Transform3DGroup the RotateTransform3D is get from it
+            </summary><param name="model">model</param><returns>TranslateTransform3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectTranslation(System.String)"><summary>
+            Gets a TranslateTransform3D for the object with objectName - if there is a Transform3DGroup the RotateTransform3D is get from it
+            </summary><param name="objectName">objectName</param><returns>TranslateTransform3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.Windows.Media.Media3D.Vector3D,System.Double)"><summary>
+            Applies AxisAngleRotation3D to all objects and lights.
+            </summary><param name="objectRotationAxis">Axis in AxisAngleRotation3D</param><param name="objectRotationAngle">Angle in AxisAngleRotation3D</param></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.String,System.Windows.Media.Media3D.Vector3D,System.Double)"><summary>
+            Applies AxisAngleRotation3D to the object with objectName and to all its child objects
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="objectRotationAxis">Axis in AxisAngleRotation3D</param><param name="objectRotationAngle">Angle in AxisAngleRotation3D</param></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.Windows.Media.Media3D.Vector3D,System.Double,System.Boolean)"><summary>
+            Applies AxisAngleRotation3D to all objects and lights. The rotation is applied around objects center point.
+            </summary><param name="objectRotationAxis">Axis in AxisAngleRotation3D</param><param name="objectRotationAngle">Angle in AxisAngleRotation3D</param><param name="isAdditive">if true than the angle values are added to previous angle. Note: objectRotationAxis is not added to previous value - the previous value is replaced by this axis</param></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.String,System.Windows.Media.Media3D.Vector3D,System.Double,System.Boolean)"><summary>
+            Applies AxisAngleRotation3D to the object with objectName and to all its child objects. The rotation is applied around objects center point.
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="objectRotationAxis">Axis in AxisAngleRotation3D</param><param name="objectRotationAngle">Angle in AxisAngleRotation3D</param><param name="isAdditive">if true than the angle values are added to previous angle. Note: objectRotationAxis is not added to previous value - the previous value is replaced by this axis</param></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.Windows.Media.Media3D.AxisAngleRotation3D)"><summary>
+            Applies AxisAngleRotation3D to all objects and lights. The rotation is applied around objects center point.
+            </summary><param name="objectRotation">applied AxisAngleRotation3D</param></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.String,System.Windows.Media.Media3D.AxisAngleRotation3D)"><summary>
+            Applies AxisAngleRotation3D to the object with objectName and to all its child objects. The rotation is applied around objects center point.
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="objectRotation">applied AxisAngleRotation3D</param></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.Windows.Media.Media3D.RotateTransform3D)"><summary>
+            Applies RotateTransform3D to all objects and lights. The rotation is applied around objects center point.
+            </summary><param name="objectRotateTransform">RotateTransform3D to apply - here it is possible to specify the center of rotation</param></member>
+		<member name="M:Ab3d.Transformer3ds.RotateObject(System.String,System.Windows.Media.Media3D.RotateTransform3D)"><summary>
+            Applies RotateTransform3D to the object with objectName and to all its child objects - enables rotating object around custom center point.
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="objectRotateTransform">RotateTransform3D to apply - here it is possible to specify the center of rotation</param></member>
+		<member name="M:Ab3d.Transformer3ds.ScaleObject(System.Double,System.Double,System.Double)"><summary>
+            Applies scale transformation to all objects and lights.
+            </summary><param name="scaleX">scaleX</param><param name="scaleY">scaleY</param><param name="scaleZ">scaleZ</param></member>
+		<member name="M:Ab3d.Transformer3ds.ScaleObject(System.String,System.Double,System.Double,System.Double)"><summary>
+            Applies scale transformation to the object with objectName and to all its child objects
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="scaleX">scaleX</param><param name="scaleY">scaleY</param><param name="scaleZ">scaleZ</param></member>
+		<member name="M:Ab3d.Transformer3ds.ScaleObject(System.Double,System.Double,System.Double,System.Boolean)"><summary>
+            Applies scale transformation to all objects and lights.
+            </summary><param name="scaleX">scaleX</param><param name="scaleY">scaleY</param><param name="scaleZ">scaleZ</param><param name="isAdditive">if true than the scale values are added to previous scale factors</param></member>
+		<member name="M:Ab3d.Transformer3ds.ScaleObject(System.String,System.Double,System.Double,System.Double,System.Boolean)"><summary>
+            Applies scale transformation to the object with objectName and to all its child objects
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="scaleX">scaleX</param><param name="scaleY">scaleY</param><param name="scaleZ">scaleZ</param><param name="isAdditive">if true than the scale values are added to previous scale factors</param></member>
+		<member name="M:Ab3d.Transformer3ds.ScaleObject(System.Windows.Media.Media3D.ScaleTransform3D)"><summary>
+            Applies scale transformation to all objects and lights.
+            </summary><param name="objectScale">objectScale</param></member>
+		<member name="M:Ab3d.Transformer3ds.ScaleObject(System.String,System.Windows.Media.Media3D.ScaleTransform3D)"><summary>
+            Applies scale transformation to the object with objectName and to all its child objects
+            </summary><param name="objectName">objectName</param><param name="objectScale">objectScale</param></member>
+		<member name="M:Ab3d.Transformer3ds.TranslateObject(System.Double,System.Double,System.Double)"><summary>
+            Applies scale transformation to all objects and lights.
+            </summary><param name="offsetX">offsetX</param><param name="offsetY">offsetY</param><param name="offsetZ">offsetZ</param></member>
+		<member name="M:Ab3d.Transformer3ds.TranslateObject(System.String,System.Double,System.Double,System.Double)"><summary>
+            Applies scale transformation to the object with objectName and to all its child objects
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="offsetX">offsetX</param><param name="offsetY">offsetY</param><param name="offsetZ">offsetZ</param></member>
+		<member name="M:Ab3d.Transformer3ds.TranslateObject(System.Double,System.Double,System.Double,System.Boolean)"><summary>
+            Applies scale transformation to all objects and lights.
+            </summary><param name="offsetX">offsetX</param><param name="offsetY">offsetY</param><param name="offsetZ">offsetZ</param><param name="isAdditive">if true than the translation is relative to the previous translation</param></member>
+		<member name="M:Ab3d.Transformer3ds.TranslateObject(System.String,System.Double,System.Double,System.Double,System.Boolean)"><summary>
+            Applies scale transformation to the object with objectName and to all its child objects
+            </summary><param name="objectName">name of the object in 3ds file</param><param name="offsetX">offsetX</param><param name="offsetY">offsetY</param><param name="offsetZ">offsetZ</param><param name="isAdditive">if true than the translation is relative to the previous transaltion</param></member>
+		<member name="M:Ab3d.Transformer3ds.TranslateObject(System.Windows.Media.Media3D.TranslateTransform3D)"><summary>
+            Applies scale transformation to all objects and lights.
+            </summary><param name="objectTranslation">objectTranslation</param></member>
+		<member name="M:Ab3d.Transformer3ds.TranslateObject(System.String,System.Windows.Media.Media3D.TranslateTransform3D)"><summary>
+            Applies scale transformation to the object with objectName and to all its child objects
+            </summary><param name="objectName">objectName</param><param name="objectTranslation">objectTranslation</param></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectOrItsGroup(System.String)"><summary>
+            If objectName from UsedReader3ds.NamedObjects is Model3DGroup or Light the same model is returned. 
+            If objectName is GeometryModel3D and it has children (because of hierarchy there was a Model3DGroup created for it) than return the Model3DGroup.
+            If objectName is GeometryModel3D and has no children return model as GeometryModel3D.
+            </summary><param name="objectName">name of the object</param><returns>model itself or its Parent Model3DGroup</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectOrItsGroup(System.Windows.Media.Media3D.Model3D)"><summary>
+            If model is Model3DGroup or Light the same model is returned. 
+            If model is GeometryModel3D and it has children (because of hierarchy there was a Model3DGroup created for it) than return the Model3DGroup.
+            If model is GeometryModel3D and has no children return model as GeometryModel3D.
+            </summary><param name="model">GeometryModel3D, Model3DGroup or Light</param><returns>model itself or its Parent Model3DGroup</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectSize(System.Windows.Media.Media3D.Model3D)"><summary>
+            Gets the size of one Model3D - length of the diagonal of object's bounds
+            </summary><param name="oneObject">GeometryModel3D, Model3DGroup or Light</param><returns>size of one Model3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetSize(System.Windows.Media.Media3D.Model3D)"><summary>
+            Gets the size of one Model3D - length of the diagonal of object's bounds
+            </summary><param name="oneObject">GeometryModel3D, Model3DGroup or Light</param><returns>size of one Model3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectCenter(System.Windows.Media.Media3D.Model3D)"><summary>
+            Returns a center point of a Model3D object
+            </summary><param name="oneObject">GeometryModel3D, Model3DGroup or Light</param><returns>center point of a Model3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetCenterPosition(System.Windows.Media.Media3D.Model3D)"><summary>
+            Returns a center point of a Model3D object
+            </summary><param name="oneObject">GeometryModel3D, Model3DGroup or Light</param><returns>center point of a Model3D</returns></member>
+		<member name="M:Ab3d.Transformer3ds.HasChildren(System.String)"><summary>
+            Returns true if the objectName (Model3DGroup or GeometryModel3D) has children (at least one - empty collection returns false). 
+            GeometryModel3D can have children if for it there was a Model3DGroup created (becasue of a hierarchy).
+            In this case there is a (objectName + Reader3ds.GroupNameSuffix) in NamedObjects dictionary.
+            </summary><param name="objectName">objectName</param><returns>true if model has children</returns></member>
+		<member name="M:Ab3d.Transformer3ds.HasChildren(System.Windows.Media.Media3D.Model3D)"><summary>
+            Returns true if the Model3DGroup or GeometryModel3D has children (at least one - empty collection returns false). 
+            GeometryModel3D can have children if for it there was a Model3DGroup created (becasue of a hierarchy).
+            In this case there is a (objectName + Reader3ds.GroupNameSuffix) in NamedObjects dictionary.
+            </summary><param name="model">Model3DGroup or GeometryModel3D</param><returns>true if model has children</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetChildren(System.String)"><summary>
+            Get Model3DCollection (Children) for objectName (Model3DGroup or GeometryModel3D) or null if model has no children.
+            GeometryModel3D can have children if for it there was a Model3DGroup created (becasue of a hierarchy).
+            In this case there is a (objectName + Reader3ds.GroupNameSuffix) in NamedObjects dictionary.
+            </summary><param name="objectName">name of the object</param><returns>Model3DCollection (Children) or null if model has no children</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetChildren(System.Windows.Media.Media3D.Model3D)"><summary>
+            Get Model3DCollection (Children) for Model3DGroup or GeometryModel3D or null if model has no children.
+            GeometryModel3D can have children if for it there was a Model3DGroup created (becasue of a hierarchy).
+            In this case there is a (objectName + Reader3ds.GroupNameSuffix) in NamedObjects dictionary.
+            </summary><param name="model">Model3DGroup or GeometryModel3D</param><returns>Model3DCollection (Children) or null if model has no children</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetObjectName(System.Windows.Media.Media3D.Model3D)"><summary>
+            Gets the name of the object from UsedReader3ds.NamedObjects dictionary
+            </summary><param name="model">Model3DGroup, GeometryModel3D or Light to find name</param><returns>name of the object or null if object is not found in UsedReader3ds.NamedObjects</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetParentGroup(System.String)"><summary>
+            Gets the parent Model3DGroup of the NamedObject. If the objectName is already a Model3DGroup than the same object is returned, else the parent group is returned.
+            Used when you get a GeometryModel3D from Reader3ds's NamedObjects and would like to apply a transformation to the GeometryModel3D and all its child objects.
+            </summary><param name="objectName">objectName from NamedObjects for which a parent Model3DGroup should be returned</param><returns>parent Model3DGroup of modelToFind</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetParentGroup(System.Windows.Media.Media3D.GeometryModel3D)"><summary>
+            Gets the parent Model3DGroup of the GeometryModel3D.
+            Used when you get a GeometryModel3D from Reader3ds's NamedObjects and would like to apply a transformation to the GeometryModel3D and all its child objects
+            </summary><param name="modelToFind">GeometryModel3D which parent Model3DGroup will be returned</param><returns>parent Model3DGroup of modelToFind</returns></member>
+		<member name="M:Ab3d.Transformer3ds.GetParentGroup(System.Windows.Media.Media3D.Model3DGroup,System.Windows.Media.Media3D.GeometryModel3D)"><summary>
+            Gets the parent Model3DGroup of the GeometryModel3D.
+            Used when you get a GeometryModel3D from Reader3ds's NamedObjects and would like to apply a transformation to the GeometryModel3D and all its child objects
+            </summary><param name="rootModel">root Model3DGroup - usually same as myReader3ds.RootModel3DGroup</param><param name="modelToFind">GeometryModel3D which parent Model3DGroup will be returned</param><returns>parent Model3DGroup of modelToFind</returns></member>
+		<member name="P:Ab3d.Transformer3ds.UsedReader3ds"><summary>
+            Gets a Reader3ds that is used in this Transformer3ds
+            </summary></member>
+		<member name="T:Ab3d.Visuals.BaseModel3dsVisual3D"><summary>
+            BaseModelVisual3D is a base abstract for all model Visual3D classes
+            </summary></member>
+		<member name="M:Ab3d.Visuals.BaseModel3dsVisual3D.#ctor"><summary>
+            Constructor
+            </summary></member>
+		<member name="M:Ab3d.Visuals.BaseModel3dsVisual3D.OnPropertyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)"><summary>
+            OnPropertyChanged
+            </summary><param name="obj">DependencyObject</param><param name="args">DependencyPropertyChangedEventArgs</param></member>
+		<member name="M:Ab3d.Visuals.BaseModel3dsVisual3D.SetModel(System.Windows.Media.Media3D.Model3D)"><summary>
+            Sets the Content of the Visual3D
+            </summary><param name="model">new Model3D</param></member>
+		<member name="M:Ab3d.Visuals.BaseModel3dsVisual3D.UpdateContentIfNotInizializing"><summary>
+            Updates the content if the Visual3D is not initializing (between BeginInit and EndInit)
+            </summary></member>
+		<member name="M:Ab3d.Visuals.BaseModel3dsVisual3D.RefreshGeometry"><summary>
+            Recreates the Visual3D geometry
+            </summary></member>
+		<member name="F:Ab3d.Visuals.BaseModel3dsVisual3D.isInitializing"><summary>
+            if true the Visual3D is initializing (between BeginInit and EndInit)
+            </summary></member>
+		<member name="M:Ab3d.Visuals.BaseModel3dsVisual3D.BeginInit"><summary>
+            Signals the line 3D that initialization is starting.
+            </summary></member>
+		<member name="M:Ab3d.Visuals.BaseModel3dsVisual3D.EndInit"><summary>
+            Signals the line 3D that initialization is complete.
+            </summary></member>
+		<member name="T:Ab3d.Visuals.Model3ds"><summary>
+            Model3ds is a Visual3D class that shows 3D models that are read from 3ds file specified with Source property.
+            </summary><remarks><para>
+            Model3ds can be used in XAML to show 3D models that are read from 3ds file.
+            </para><para>
+            The source of the 3ds file is specified with <see cref="P:Ab3d.Visuals.Model3ds.Source" /> property.
+            </para><para>
+            The read 3D model is positioned according to the <see cref="P:Ab3d.Visuals.Model3ds.Position" /> and <see cref="P:Ab3d.Visuals.Model3ds.PositionType" /> properties
+            </para><para>
+            If the PositionType is set to Center (default), the 3D model will be position so that its center will be at the Position coordinates.
+            If the PositionType is set to BottomCenter, the 3D model will be positioned above the Position coordinates.
+            </para><para>
+            The size of the shown object is controlled by the <see cref="P:Ab3d.Visuals.Model3ds.SizeX" />, <see cref="P:Ab3d.Visuals.Model3ds.SizeY" />, <see cref="P:Ab3d.Visuals.Model3ds.SizeZ" /> and <see cref="P:Ab3d.Visuals.Model3ds.PreserveScaleAspectRatio" /> properties.
+            </para><para>
+            By default all the SizeX, SizeY and SizeZ are set to -1. This means that the original size of the object is used. But if the SizeX is set to let's say 100, the object would be scaled so its SizeX would be 100.
+            </para><para>
+            If PreserveScaleAspectRatio is true (default), than the aspect ratio of the 3D model is preserved. This means that the model is stretched to one side mode than to the other - the scale is evenly set to all the axis. This also means that if all SizeX, SizeY and SizeZ are defined, the object will be scaled so it will not exceed and of the specified sizes. 
+            </para><para>
+            If PreserveScaleAspectRatio is false, than the aspect ration of the 3D model will not be preserved. In this case the SizeX, SizeY and SizeZ will be applied so the object will be exactly the size of the specified sizes.
+            </para><para>
+            By default all the 3D models from 3ds file are shown with Model3ds. If only some of the objects need to be shown, it is possible to set the <see cref="P:Ab3d.Visuals.Model3ds.ObjectName" /> property to the name of the 3D model to show. The name should be one of the names from the Reader3ds's NamedObjects dictionary.
+            </para><para>
+            To get the names of the read objects, a <see cref="M:Ab3d.Reader3ds.DumpNamedObjects" /> or <see cref="M:Ab3d.Reader3ds.GetNamedObjectsText" /> methods can be used on Reader3ds. With Model3ds the used Reader3ds can be accessed with <see cref="P:Ab3d.Visuals.Model3ds.UsedReader3ds" /> property. For example to get the object names and their hierarchy run the following in the Visual Studio Immediate window (execute after the 3ds file has been read):
+            </para><code>
+            MyModel3ds.UsedReader3ds.DumpNamedObjects(); // MyModel3ds is an instance of Model3ds
+            </code><para>
+            Reader3ds can also play animations from 3ds files. This can be also done with Model3ds with its <see cref="P:Ab3d.Visuals.Model3ds.FrameNumber" /> property. This property can be bound to a DoubleAnimation to animate its value from the first frame to the last frame.
+            </para><para>
+            There are also two additional properties. 
+            </para><para>
+            The <see cref="P:Ab3d.Visuals.Model3ds.IsReader3dsShared" /> property specifies if the used Reader3ds is shared between Model3ds instances. By default its value is True, which means that each source 3ds file is read only once for all Model3ds instances that use the same source. If the value is set to False, the Model3ds creates its own Reader3ds and read the 3ds file with it.
+            </para><para>
+            The <see cref="P:Ab3d.Visuals.Model3ds.IsModel3DCloned" /> property specifies if the 3D model that is shown is cloned for each Model3ds instances. By default IsModel3DCloned is set to false. This means that all shared Model3ds instances get the same instance of 3D Model. If you need to change a model without changing all other shared models, set the IsModel3DCloned to true.
+            </para><para>
+            The <see cref="T:Ab3d.Reader3ds" /> class defines many properties that can be set before the 3ds file is read. For example with <see cref="P:Ab3d.Reader3ds.Shading" /> it is possible to specify what type of shading will be used for the 3D models. To set those properties it is possible to subscribe to <see cref="E:Ab3d.Visuals.Model3ds.BeforeReading3dsFile" /> event. The event is fired after the <see cref="P:Ab3d.Visuals.Model3ds.UsedReader3ds" /> property is set to Reader3ds instance and before the 3ds file is read. This means that in the event handler it is possible to set the special properties on Reader3ds. When subscribing to <see cref="E:Ab3d.Visuals.Model3ds.BeforeReading3dsFile" /> event and the <see cref="P:Ab3d.Visuals.Model3ds.IsReader3dsShared" /> is true (by default) be careful to subscribe on the first Model3ds because only on the first Model3ds the 3ds is actually read.
+            </para></remarks><example><para>
+            Before using Model3ds the following namespace declaration has to be added to the root xaml element:
+            </para><code>
+            xmlns:model3ds="clr-namespace:Ab3d.Visuals;assembly=Ab3d.Reader3ds"
+            </code><para>
+            Now the Model3ds can be used in XAML. The following example shown a 3D model from ab3d.3ds file. The model's center is positioned at (-250, 0, 0) and its size is set so its SizeX is 80:
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="80"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code><para>
+            The following code shows the same mode, but this time it is custom sized:
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="50" SizeY="30" SizeZ="40"
+                               PreserveScaleAspectRatio="False"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code><para>
+            The following example shows a Teapot01 model from the multiple objects.3ds file:
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds x:Name="Teapot1"
+                               Source="/Resources/multiple objects.3ds" 
+                               ObjectName="Teapot01"
+                               SizeY="20"&gt;
+            </code></example></member>
+		<member name="F:Ab3d.Visuals.Model3ds.modelTransformGroup"><summary>
+            Transform3DGroup that is used to scale and position the model
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.modelTranslate"><summary>
+            TranslateTransform3D that is used to position the model
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.modelScale"><summary>
+            ScaleTransform3D that is used to scale the model
+            </summary></member>
+		<member name="M:Ab3d.Visuals.Model3ds.#ctor"><summary>
+            Constructor
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.SourceProperty"><summary>
+            SourceProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.IsReader3dsSharedProperty"><summary>
+            IsReader3dsSharedProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.IsModel3DClonedProperty"><summary>
+            IsModel3DClonedProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.ObjectNameProperty"><summary>
+            ObjectNameProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.PositionProperty"><summary>
+            PositionProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.PositionTypeProperty"><summary>
+            PositionTypeProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.SizeXProperty"><summary>
+            SizeXProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.SizeYProperty"><summary>
+            SizeYProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.SizeZProperty"><summary>
+            SizeZProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.PreserveScaleAspectRatioProperty"><summary>
+            PreserveScaleAspectRatioProperty
+            </summary></member>
+		<member name="F:Ab3d.Visuals.Model3ds.FrameNumberProperty"><summary>
+            FrameNumberProperty
+            </summary></member>
+		<member name="M:Ab3d.Visuals.Model3ds.Reload"><summary>
+            Forces a reload of the 3ds file
+            </summary></member>
+		<member name="M:Ab3d.Visuals.Model3ds.RefreshGeometry"><summary>
+            Recreates the Visual3D geometry
+            </summary></member>
+		<member name="M:Ab3d.Visuals.Model3ds.UpdateContentIfNotInizializing"><summary>
+            Updates the content if the Visual3D is not initializing (between BeginInit and EndInit)
+            </summary></member>
+		<member name="M:Ab3d.Visuals.Model3ds.SetModelTranslate"><summary>
+            SetModelTranslate sets the modelTranslate as TranslateTransform3D. It is used to position the model. The method can be overridden to provide custom positioning.
+            </summary></member>
+		<member name="M:Ab3d.Visuals.Model3ds.SetModelScale"><summary>
+            SetModelScale set the modelScale as ScaleTransform3D. It is used to scale the model. The method can be overridden to provide custom scaling.
+            </summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.UsedReader3ds"><summary>
+            Gets a Ab3d.Reader3ds instance that is used to read the 3ds file.
+            </summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.Source"><summary>
+            Gets or sets the Source of the 3ds file
+            </summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.IsReader3dsShared"><summary>
+            Gets or sets a Boolean that specifies if the same Source 3ds file is read only once and is shared between all Model3dsVisual3Ds that use the same Source. Default value is true.
+            </summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.IsModel3DCloned"><summary>
+            Gets or sets a Boolean that specifies if the Model3D is cloned before it is set as the Model3dsVisual3D's Content. Default value is false.
+            </summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.ObjectName"><summary>
+            Gets or sets the name of the object from the Source 3ds file that will be shown. If empty (default) all the objects from 3ds will be shown.
+            </summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.Position"><summary>
+            Gets or sets the Position of the read 3ds model. The type of position is determined by <see cref="P:Ab3d.Visuals.Model3ds.PositionType" /> property.
+            </summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.PositionType"><summary>
+            Gets or sets the <see cref="T:Ab3d.Common.Visuals.VisualPositionType" /> value that specifies the type of the <see cref="P:Ab3d.Visuals.Model3ds.Position" /></summary></member>
+		<member name="P:Ab3d.Visuals.Model3ds.SizeX"><summary>
+            Gets or sets the size in of the 3D model in X dimension.
+            </summary><remarks><para>
+            The default value of SizeX is -1. This means that the original X Size of the object is preserved.
+            </para><para>
+            How the SizeX is applied to the shown model depends on the <see cref="P:Ab3d.Visuals.Model3ds.PreserveScaleAspectRatio" /> property.
+            </para><para>
+            If it is false, than the x size of the shown object will be the same as the specified SizeX (if -1 than the original object x size is used).
+            </para><para>
+            If PreserveScaleAspectRatio is true (by default), than the aspect ratio of the 3D model is preserved. This means that the model is stretched to one side mode than to the other - the scale is evenly set to all the axis. This also means that if all SizeX, SizeY and SizeZ are defined, the object will be scaled so it will not exceed and of the specified sizes.
+            </para></remarks><example><para>
+            The following example shown a 3D model from ab3d.3ds file. The model's center is positioned at (-250, 0, 0) and its size is set so its SizeX is 80. Note that by default the PreserveScaleAspectRatio is set to true.
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="80"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code><para>
+            The following code shows the same mode, but this time it is custom sized:
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="50" SizeY="30" SizeZ="40"
+                               PreserveScaleAspectRatio="False"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code></example></member>
+		<member name="P:Ab3d.Visuals.Model3ds.SizeY"><summary>
+            Gets or sets the size in of the 3D model in Y dimension.
+            </summary><remarks><para>
+            The default value of SizeY is -1. This means that the original Y Size of the object is preserved.
+            </para><para>
+            How the SizeY is applied to the shown model depends on the <see cref="P:Ab3d.Visuals.Model3ds.PreserveScaleAspectRatio" /> property.
+            </para><para>
+            If it is false, than the y size of the shown object will be the same as the specified SizeY (if -1 than the original object y size is used).
+            </para><para>
+            If PreserveScaleAspectRatio is true (by default), than the aspect ratio of the 3D model is preserved. This means that the model is stretched to one side mode than to the other - the scale is evenly set to all the axis. This also means that if all SizeX, SizeY and SizeZ are defined, the object will be scaled so it will not exceed and of the specified sizes.
+            </para></remarks><example><para>
+            The following example shown a 3D model from ab3d.3ds file. The model's center is positioned at (-250, 0, 0) and its size is set so its SizeX is 80. Note that by default the PreserveScaleAspectRatio is set to true.
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="80"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code><para>
+            The following code shows the same mode, but this time it is custom sized:
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="50" SizeY="30" SizeZ="40"
+                               PreserveScaleAspectRatio="False"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code></example></member>
+		<member name="P:Ab3d.Visuals.Model3ds.SizeZ"><summary>
+            Gets or sets the size in of the 3D model in Z dimension.
+            </summary><remarks><para>
+            The default value of SizeZ is -1. This means that the original Z Size of the object is preserved.
+            </para><para>
+            How the SizeZ is applied to the shown model depends on the <see cref="P:Ab3d.Visuals.Model3ds.PreserveScaleAspectRatio" /> property.
+            </para><para>
+            If it is false, than the z size of the shown object will be the same as the specified SizeZ (if -1 than the original object z size is used).
+            </para><para>
+            If PreserveScaleAspectRatio is true (by default), than the aspect ratio of the 3D model is preserved. This means that the model is stretched to one side mode than to the other - the scale is evenly set to all the axis. This also means that if all SizeX, SizeY and SizeZ are defined, the object will be scaled so it will not exceed and of the specified sizes.
+            </para></remarks><example><para>
+            The following example shown a 3D model from ab3d.3ds file. The model's center is positioned at (-250, 0, 0) and its size is set so its SizeX is 80. Note that by default the PreserveScaleAspectRatio is set to true.
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="80"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code><para>
+            The following code shows the same mode, but this time it is custom sized:
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="50" SizeY="30" SizeZ="40"
+                               PreserveScaleAspectRatio="False"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code></example></member>
+		<member name="P:Ab3d.Visuals.Model3ds.PreserveScaleAspectRatio"><summary>
+            Gets or sets a Boolean that specifies if the 3D model is scaled so its aspect ratio is preserved (the ratio between width, height and depth of the object).
+            </summary><remarks><para>
+            The size of the shown object is controlled by the <see cref="P:Ab3d.Visuals.Model3ds.SizeX" />, <see cref="P:Ab3d.Visuals.Model3ds.SizeY" />, <see cref="P:Ab3d.Visuals.Model3ds.SizeZ" /> and <see cref="P:Ab3d.Visuals.Model3ds.PreserveScaleAspectRatio" /> properties.
+            </para><para>
+            By default all the SizeX, SizeY and SizeZ are set to -1. This means that the original size of the object is used. But if the SizeX is set to let's say 100, the object would be scaled so its SizeX would be 100.
+            </para><para>
+            If PreserveScaleAspectRatio is true (default), than the aspect ratio of the 3D model is preserved. This means that the model is stretched to one side mode than to the other - the scale is evenly set to all the axis. This also means that if all SizeX, SizeY and SizeZ are defined, the object will be scaled so it will not exceed and of the specified sizes. 
+            </para><para>
+            If PreserveScaleAspectRatio is false, than the aspect ration of the 3D model will not be preserved. In this case the SizeX, SizeY and SizeZ will be applied so the object will be exactly the size of the specified sizes.
+            </para></remarks><example><para>
+            The following example shown a 3D model from ab3d.3ds file. The model's center is positioned at (-250, 0, 0) and its size is set so its SizeX is 80. Note that by default the PreserveScaleAspectRatio is set to true.
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="80"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code><para>
+            The following code shows the same mode, but this time it is custom sized:
+            </para><code lang="xaml">
+            &lt;model3ds:Model3ds Source="/Resources/ab3d.3ds" 
+                               SizeX="50" SizeY="30" SizeZ="40"
+                               PreserveScaleAspectRatio="False"
+                               Position="0 40 0" PositionType="Center"/&gt;
+            </code></example></member>
+		<member name="P:Ab3d.Visuals.Model3ds.FrameNumber"><summary>
+            Gets or sets the frame number that is shown by this Model3ds.
+            </summary><remarks><para>
+            This property can be bound to a DoubleAnimation to animate its value from the first frame to the last frame.
+            </para><note>PRO VERSION ONLY: FrameNumber can be set only in Pro version. In Basic version the first frame is always shown.</note></remarks></member>
+		<member name="E:Ab3d.Visuals.Model3ds.BeforeReading3dsFile"><summary>
+            BeforeReading3dsFile event occurs after the UsedReader3ds has been created and before the actual 3ds file has been read.
+            </summary><remarks><para>
+            The BeforeReading3dsFile is useful if you want to set some special properties on the <see cref="T:Ab3d.Reader3ds" /> object before it reads the 3ds file.
+            </para></remarks><example><para>
+            The following examples shows the BeforeReading3dsFile event handler that sets custom shading and custom DefaultMaterial.
+            </para><code>
+            private void MyModel3ds_BeforeReading3dsFile(object sender, EventArgs e)
+            {
+                MyModel3ds.UsedReader3ds.Shading = Ab3d.Reader3ds.ShadingType.Flat;
+                MyModel3ds.UsedReader3ds.DefaultMaterial = new DiffuseMaterial(Brushes.Green);
+            }
+            </code></example></member>
+		<member name="E:Ab3d.Visuals.Model3ds.AfterReading3dsFile"><summary>
+            AfterReading3dsFile event occurs after the 3ds file has been read.
+            </summary></member>
+	</members>
+</doc>

@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetSTEM.Model3DBrowser", "GetSTEM.Model3DBrowser\GetSTEM.Model3DBrowser.csproj", "{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GetSTEM.Model3DBrowser.Setup", "GetSTEM.Model3DBrowser.Setup\GetSTEM.Model3DBrowser.Setup.vdproj", "{5CF3794E-153C-4A38-9DF6-D6980BD20CE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Debug|x86.ActiveCfg = Debug|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Debug|x86.Build.0 = Debug|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Release|Any CPU.ActiveCfg = Release|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Release|Mixed Platforms.Build.0 = Release|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Release|x86.ActiveCfg = Release|x86
+		{EF52E4DC-2C32-4E68-9F0C-85681DBF9871}.Release|x86.Build.0 = Release|x86
+		{5CF3794E-153C-4A38-9DF6-D6980BD20CE5}.Debug|Any CPU.ActiveCfg = Debug
+		{5CF3794E-153C-4A38-9DF6-D6980BD20CE5}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{5CF3794E-153C-4A38-9DF6-D6980BD20CE5}.Debug|x86.ActiveCfg = Debug
+		{5CF3794E-153C-4A38-9DF6-D6980BD20CE5}.Release|Any CPU.ActiveCfg = Release
+		{5CF3794E-153C-4A38-9DF6-D6980BD20CE5}.Release|Mixed Platforms.ActiveCfg = Release
+		{5CF3794E-153C-4A38-9DF6-D6980BD20CE5}.Release|x86.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
