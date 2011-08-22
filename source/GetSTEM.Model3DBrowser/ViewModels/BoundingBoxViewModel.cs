@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GetSTEM.Model3DBrowser.Services;
+using GetSTEM.Model3DBrowser.Messages;
+using GalaSoft.MvvmLight.Messaging;
 using GetSTEM.Model3DBrowser.Logging;
-using System.Windows.Media;
 
 namespace GetSTEM.Model3DBrowser.ViewModels
 {
     public class BoundingBoxViewModel : ViewModelBase
     {
+        bool enabled;
         INuiService nuiService;
 
         public BoundingBoxViewModel(INuiService nuiService)
@@ -19,6 +19,7 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             this.nuiService.SkeletonUpdated += new EventHandler<SkeletonUpdatedEventArgs>(nuiService_SkeletonUpdated);
             this.nuiService.UserEnteredBounds += new EventHandler(nuiService_UserEnteredBounds);
             this.nuiService.UserExitedBounds += new EventHandler(nuiService_UserExitedBounds);
+            Messenger.Default.Register<BoundingBoxEnabledMessage>(this, this.HandleBoundingBoxEnabledMessage);
         }
 
         public const string TorsoOffsetZPropertyName = "TorsoOffsetZ";
@@ -166,10 +167,13 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
         void nuiService_SkeletonUpdated(object sender, SkeletonUpdatedEventArgs e)
         {
-            this.TorsoOffsetX =
-                           (this.BoundsDisplaySize / 2) * e.TorsoJoint.Position.X / (this.BoundsWidth / 2);
-            this.TorsoOffsetZ = (this.BoundsDisplaySize / 2) * (e.TorsoJoint.Position.Z
-                - (this.MinDistanceFromCamera + this.BoundsDepth / 2)) / (this.BoundsDepth / 2);
+            if (this.enabled)
+            {
+                this.TorsoOffsetX =
+                               (this.BoundsDisplaySize / 2) * e.TorsoJoint.Position.X / (this.BoundsWidth / 2);
+                this.TorsoOffsetZ = (this.BoundsDisplaySize / 2) * (e.TorsoJoint.Position.Z
+                    - (this.MinDistanceFromCamera + this.BoundsDepth / 2)) / (this.BoundsDepth / 2);
+            }
         }
 
         void nuiService_UserExitedBounds(object sender, EventArgs e)
@@ -180,6 +184,12 @@ namespace GetSTEM.Model3DBrowser.ViewModels
         void nuiService_UserEnteredBounds(object sender, EventArgs e)
         {
             this.UserPointColor = Color.FromArgb(255, 0, 255, 0);
+        }
+
+        void HandleBoundingBoxEnabledMessage(BoundingBoxEnabledMessage message)
+        {
+            this.enabled = message.Enabled;
+            DebugLogWriter.WriteMessage("Bounding box calculations enabled: " + this.enabled.ToString());
         }
 
         public override void Cleanup()

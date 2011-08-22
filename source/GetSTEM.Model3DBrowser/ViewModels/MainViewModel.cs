@@ -80,6 +80,9 @@ namespace GetSTEM.Model3DBrowser.ViewModels
                 RaisePropertyChanged(ShowBoundingBoxPropertyName);
                 this.BoundingBoxVisibility = this.showBoundingBox ? Visibility.Visible : Visibility.Collapsed;
                 this.nuiService.IsInConfigMode = this.showBoundingBox;
+
+                Messenger.Default.Send<BoundingBoxEnabledMessage>(
+                    new BoundingBoxEnabledMessage() { Enabled = showBoundingBox });
             }
         }
 

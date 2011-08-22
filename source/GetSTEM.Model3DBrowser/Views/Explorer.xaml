@@ -31,6 +31,7 @@
         <Viewport3D>
             <ModelVisual3D x:Name="mainVisual">
                 <ModelVisual3D.Children>
+                    <ModelVisual3D x:Name="wireVisual" />
                     <petzold:Axes 
                         FontSize=".2"
                         Extent="60"

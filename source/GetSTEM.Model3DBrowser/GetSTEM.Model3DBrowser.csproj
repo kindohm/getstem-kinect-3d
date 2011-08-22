@@ -144,6 +144,7 @@
     <Compile Include="Logging\LogWriterWrapper.cs" />
     <Compile Include="Logging\WarnLogWriter.cs" />
     <Compile Include="Messages\AutoPlayMessage.cs" />
+    <Compile Include="Messages\BoundingBoxEnabledMessage.cs" />
     <Compile Include="Messages\StartAutoPlayMessage.cs" />
     <Compile Include="Messages\StopAutoPlayMessage.cs" />
     <Compile Include="Messages\ToggleMessage.cs" />
@@ -227,6 +228,7 @@
   <ItemGroup>
     <Content Include="Configuration.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
