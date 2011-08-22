@@ -108,6 +108,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Messages\Equation.cs" />
+    <Compile Include="Messages\EquationMessage.cs" />
     <Compile Include="ViewModels\ModelLoader.cs" />
     <Compile Include="ViewModels\ModelResult.cs" />
     <Compile Include="Views\MathView.xaml.cs">

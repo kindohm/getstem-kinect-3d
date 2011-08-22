@@ -5,8 +5,33 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              DataContext="{Binding Math, Source={StaticResource Locator}}"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="500">
     <Grid>
-            
+        <Border
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="10"
+            CornerRadius="0"
+            Padding="0"
+            IsHitTestVisible="False"
+            Background="#00CCCCFF">
+            <StackPanel>
+                <TextBlock
+                    FontWeight="Bold"
+                    Text="Y Axis Rotation"/>
+                <TextBlock
+                    Text="{Binding RotationYEquation}"/>
+                <TextBlock
+                    Text="{Binding RotationYEquationActual}"/>
+                <TextBlock
+                    Margin="0 20 0 0"
+                    FontWeight="Bold"
+                    Text="X Axis Rotation"/>
+                <TextBlock
+                    Text="{Binding RotationXEquation}"/>
+                <TextBlock
+                    Text="{Binding RotationXEquationActual}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

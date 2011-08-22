@@ -281,14 +281,38 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             {
                 var diff = current.X - previousY.X;
                 var rotationYAngleIncrement = rotationScaleFunction(diff, rotationScaleFactor);
+                var previousYAngle = this.RotationYAngle;
                 this.RotationYAngle += rotationYAngleIncrement;
+                var message = new EquationMessage()
+                {
+                    Increment = rotationYAngleIncrement,
+                    Current = current.X,
+                    Previous = previousY.X,
+                    CurrentAngle = this.RotationYAngle,
+                    Equation = Equation.XRotation,
+                    Scale = rotationScaleFactor,
+                    PreviousAngle = previousYAngle
+                };
+                Messenger.Default.Send<EquationMessage>(message);
             }
 
             if (rightActive && !leftActive)
             {
                 var diff = current.Y - previousX.Y;
                 var rotationXAngleIncrement = rotationScaleFunction(diff, rotationScaleFactor);
+                var previousXAngle = this.RotationXAngle;
                 this.RotationXAngle -= rotationXAngleIncrement;
+                var message = new EquationMessage()
+                {
+                    Increment = rotationXAngleIncrement,
+                    Current = current.Y,
+                    Previous = previousX.Y,
+                    CurrentAngle = this.RotationXAngle,
+                    Equation = Equation.YRotation,
+                    Scale = rotationScaleFactor,
+                    PreviousAngle = previousXAngle
+                };
+                Messenger.Default.Send<EquationMessage>(message);
             }
 
             if (rightActive & leftActive)

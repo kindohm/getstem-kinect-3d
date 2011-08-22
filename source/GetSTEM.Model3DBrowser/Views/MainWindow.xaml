@@ -16,9 +16,13 @@
             Width="{Binding ImageWidth}"
             Margin="20"
             Source="/Images/mhta.png"/>
-        
+
+        <views:MathView 
+            Visibility="{Binding Main.MathVisibility, Source={StaticResource Locator}}"
+            DataContext="{Binding Math, Source={StaticResource Locator}}" />
+
         <views:Explorer DataContext="{Binding Explorer, Source={StaticResource Locator}}" />
-        
+
         <!-- Kinect video output -->
         <Border
             HorizontalAlignment="Right"

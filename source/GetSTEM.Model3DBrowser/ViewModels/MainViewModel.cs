@@ -25,13 +25,11 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
         public MainViewModel(IConfigurationService configService, INuiService nuiService, IKeyboardService keyboardService)
         {
-
             this.keyboardService = keyboardService;
             this.keyboardService.KeyUp += new EventHandler<KeyEventArgs>(keyboardService_KeyUp);
             this.configService = configService;
             this.nuiService = nuiService;
             this.nuiService.UserRaisedHand += new EventHandler<HandRaisedEventArgs>(nuiService_UserRaisedHand);
-            //this.nuiService.SkeletonUpdated += new System.EventHandler<SkeletonUpdatedEventArgs>(nuiService_SkeletonUpdated);
             this.nuiService.UserEnteredBounds += new EventHandler(nuiService_UserEnteredBounds);
             this.nuiService.UserExitedBounds += new EventHandler(nuiService_UserExitedBounds);
             this.ToggleCommand = new RelayCommand(this.ExecuteToggleCommand);
@@ -283,6 +281,25 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             }
         }
 
+        public const string MathVisibilityPropertyName = "MathVisibility";
+        Visibility mathVisibility = Visibility.Collapsed;
+        public Visibility MathVisibility
+        {
+            get
+            {
+                return mathVisibility;
+            }
+            set
+            {
+                if (mathVisibility == value)
+                {
+                    return;
+                }
+                var oldValue = mathVisibility;
+                mathVisibility = value;
+                RaisePropertyChanged(MathVisibilityPropertyName);
+            }
+        }
 
         #endregion
 
@@ -298,12 +315,14 @@ namespace GetSTEM.Model3DBrowser.ViewModels
                 this.stemView = true;
                 this.ToggleContent = "Normal View";
                 this.MainBackgroundBrush = this.EngineeringBackgroundBrush;
+                this.MathVisibility = Visibility.Visible;
             }
             else
             {
                 this.stemView = false;
                 this.ToggleContent = "STEM View";
                 this.MainBackgroundBrush = (Brush)Application.Current.Resources["DefaultBackground"];
+                this.MathVisibility = Visibility.Collapsed;
             }
 
             Messenger.Default.Send<ToggleMessage>(new ToggleMessage());

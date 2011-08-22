@@ -19,9 +19,9 @@
         </RadialGradientBrush>
 
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="Foreground" Value="#EECCCCCC"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontFamily" Value="Arial"/>
             <Setter Property="Margin" Value="2"/>
         </Style>
 
