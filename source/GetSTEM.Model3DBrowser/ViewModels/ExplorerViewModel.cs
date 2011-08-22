@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using _3DTools;
-using Ab3d;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using GetSTEM.Model3DBrowser.Logging;
 using GetSTEM.Model3DBrowser.Messages;
 using GetSTEM.Model3DBrowser.Services;
-using Petzold.Media3D;
 
 namespace GetSTEM.Model3DBrowser.ViewModels
 {
@@ -176,7 +173,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             }
         }
 
-
         public const string EngineeringLineThicknessPropertyName = "EngineeringLineThickness";
         double engineeringLineThickness = 0;
         public double EngineeringLineThickness
@@ -328,7 +324,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             if (this.rotationXMoving & !this.leftHandCanMove)
             {
                 // stop X rotation
-                DebugLogWriter.WriteMessage("stopping x rotation");
                 this.rotationXMoving = false;
                 return;
             }
@@ -336,7 +331,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             if (this.rotationYMoving & !this.rightHandCanMove)
             {
                 // stop y rotation
-                DebugLogWriter.WriteMessage("stopping y rotation");
                 this.rotationYMoving = false;
                 return;
             }
@@ -344,7 +338,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             if (!this.rotationXMoving & this.leftHandCanMove)
             {
                 // start x rotation
-                DebugLogWriter.WriteMessage("starting x rotation");
                 this.previousX = new Point(e.LeftHandJoint.Position.X, e.LeftHandJoint.Position.Y);
                 this.rotationXMoving = true;
                 return;
@@ -354,8 +347,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             {
                 // start y rotation
                 this.previousY = new Point(e.RightHandJoint.Position.X, e.RightHandJoint.Position.Y);
-                DebugLogWriter.WriteMessage("Starting Y Rotation.");
-                DebugLogWriter.WriteMessage("previousY: " + this.previousY.X + "," + this.previousY.Y);
                 this.rotationYMoving = true;
                 return;
             }
@@ -405,7 +396,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             }
         }
 
-
         void ResetModel()
         {
             this.CameraZOffset = 200;
@@ -437,25 +427,15 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             {
                 this.stemView = true;
                 this.ConvertAllModelsOpacity(0);
-                this.ConvertAllWireframesThickness(1d);
                 this.EngineeringLineThickness = 1d;
             }
             else
             {
                 this.stemView = false;
                 this.ConvertAllModelsOpacity(1d);
-                this.ConvertAllWireframesThickness(0);
                 this.EngineeringLineThickness = 0;
             }
-        }
-
-        void ConvertAllWireframesThickness(double thickness)
-        {
-            foreach (var item in this.ScreenLinesCollection)
-            {
-                item.Thickness = thickness;
-            }
-        }
+        }   
 
         void ConvertAllModelsOpacity(double opacity)
         {
@@ -472,101 +452,9 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
         void LoadModel3DGroup()
         {
-            if (this.IsInDesignMode)
-            {
-                var mesh = new CubeMesh();
-                var model = new GeometryModel3D(mesh.Geometry,
-                     new DiffuseMaterial(new SolidColorBrush(Colors.Red)));
-                var group = new Transform3DGroup();
-                group.Children.Add(new ScaleTransform3D(new Vector3D(20, 20, 20)));
-                group.Children.Add(new RotateTransform3D(
-                    new AxisAngleRotation3D(new Vector3D(1, 1, 0), 30)));
-                model.Transform = group;
-                this.Model3DGroup = new Model3DGroup();
-                this.Model3DGroup.Children.Add(model);
-
-                return;
-            }
-
-            this.ScreenLinesCollection.Clear();
-
-            var model3DGroup = new Model3DGroup();
-            var modelConfig = configService.GetModelConfiguration();
-
-            foreach (var letter in modelConfig.LetterModels)
-            {
-                var reader = new Reader3ds();
-                var thing = reader.ReadFile(letter.ModelPath);
-                var internalModel = this.GetModelFromGroup(thing);
-
-                if (internalModel == null)
-                {
-                    throw new InvalidOperationException("3D Model could not be found in 3DS file '" + letter.ModelPath + "'");
-                }
-
-                var mesh = (MeshGeometry3D)internalModel.Geometry;
-
-                var brush = new SolidColorBrush(
-                    (Color)ColorConverter.ConvertFromString(letter.Color));
-                var materialGroup = new MaterialGroup();
-                var diffuse = new DiffuseMaterial(brush);
-                var specular = new SpecularMaterial(new SolidColorBrush(Colors.White), 1000);
-                materialGroup.Children.Add(diffuse);
-                materialGroup.Children.Add(specular);
-
-                var model = new GeometryModel3D(mesh, materialGroup);
-
-                var transformGroup = new Transform3DGroup();
-
-                var scale = new ScaleTransform3D(
-                    new Vector3D(letter.Scale, letter.Scale, letter.Scale));
-
-                var translate = new TranslateTransform3D(
-                    new Vector3D(letter.OffsetX, letter.OffsetY, letter.OffsetZ));
-
-                transformGroup.Children.Add(translate);
-                transformGroup.Children.Add(scale);
-
-                model.Transform = transformGroup;
-
-                model3DGroup.Children.Add(model);
-
-                var wireframe = new ScreenLines();
-
-                for (var i = 0; i < mesh.Positions.Count; i++)
-                {
-                    wireframe.Points.Add(mesh.Positions[i]);
-                    wireframe.Thickness = 0;
-                    wireframe.Color = Colors.White;
-                }
-
-                wireframe.Transform = transformGroup;
-                this.ScreenLinesCollection.Add(wireframe);
-            }
-
-            this.Model3DGroup = model3DGroup;
-        }
-
-        GeometryModel3D GetModelFromGroup(Model3DGroup group)
-        {
-            foreach (var child in group.Children)
-            {
-                if (child is GeometryModel3D)
-                {
-                    return (GeometryModel3D)child;
-                }
-
-                if (child is Model3DGroup)
-                {
-                    var result = GetModelFromGroup((Model3DGroup)child);
-                    if (result != null)
-                    {
-                        return result;
-                    }
-                }
-            }
-
-            return null;
+            var result = ModelLoader.LoadModel3DGroup(this.configService, this.IsInDesignMode);
+            this.Model3DGroup = result.Model3DGroup;
+            this.ScreenLinesCollection = result.Wireframes;
         }
 
         public override void Cleanup()

@@ -31,12 +31,13 @@
         <Viewport3D>
             <ModelVisual3D x:Name="mainVisual">
                 <ModelVisual3D.Children>
-                    <ModelVisual3D x:Name="wireVisual" />
                     <petzold:Axes 
+                        x:Name="axes"
                         FontSize=".2"
                         Extent="60"
                         Thickness="{Binding EngineeringLineThickness}" 
                         Color="White" />
+                    <ModelVisual3D x:Name="wireVisual" />
                     <ModelVisual3D Content="{Binding Model3DGroup}"/>
                 </ModelVisual3D.Children>
                 <ModelVisual3D.Transform>
