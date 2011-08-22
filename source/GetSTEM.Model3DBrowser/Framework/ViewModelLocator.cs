@@ -10,6 +10,7 @@ namespace GetSTEM.Model3DBrowser.Framework
         static MainViewModel main;
         static BoundingBoxViewModel boundingBox;
         static ExplorerViewModel explorer;
+        static MathViewModel math;
         static INuiService nuiService;
 
         public ViewModelLocator()
@@ -40,6 +41,9 @@ namespace GetSTEM.Model3DBrowser.Framework
 
             explorer = new ExplorerViewModel(
                 nuiService, kernel.Get<IConfigurationService>());
+
+            math = new MathViewModel();
+
         }
 
         public MainViewModel Main
@@ -57,8 +61,14 @@ namespace GetSTEM.Model3DBrowser.Framework
             get { return explorer; }
         }
 
+        public MathViewModel Math
+        {
+            get { return math; }
+        }
+
         public static void Cleanup()
         {
+            math.Cleanup();
             nuiService.Shutdown();
             boundingBox.Cleanup();
             main.Cleanup();

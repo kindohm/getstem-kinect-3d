@@ -108,6 +108,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Views\MathView.xaml.cs">
+      <DependentUpon>MathView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\BoundingBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -163,6 +166,7 @@
     <Compile Include="ViewModels\BoundingBoxViewModel.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\MathViewModel.cs" />
     <Compile Include="Views\BoundingBox.xaml.cs">
       <DependentUpon>BoundingBox.xaml</DependentUpon>
     </Compile>
@@ -177,6 +181,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\MathView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

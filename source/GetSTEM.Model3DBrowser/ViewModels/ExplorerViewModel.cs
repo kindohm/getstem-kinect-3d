@@ -7,12 +7,11 @@ using System.Windows.Media.Media3D;
 using _3DTools;
 using Ab3d;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using GetSTEM.Model3DBrowser.Logging;
+using GetSTEM.Model3DBrowser.Messages;
 using GetSTEM.Model3DBrowser.Services;
 using Petzold.Media3D;
-using GetSTEM.Model3DBrowser.Messages;
-using GetSTEM.Model3DBrowser.Logging;
 
 namespace GetSTEM.Model3DBrowser.ViewModels
 {
