@@ -15,16 +15,12 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        const double RaiseHandMilliseconds = 1500;
 
         bool stemView;
         bool kinectVisionEnabled;
-        bool raisingRightHand;
-        bool waitingForRightHandToLower;
         IConfigurationService configService;
         INuiService nuiService;
         IKeyboardService keyboardService;
-        DateTime raiseRightHandStart;
         DispatcherTimer videoTimer;
 
         public MainViewModel(IConfigurationService configService, INuiService nuiService, IKeyboardService keyboardService)
@@ -34,7 +30,8 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             this.keyboardService.KeyUp += new EventHandler<KeyEventArgs>(keyboardService_KeyUp);
             this.configService = configService;
             this.nuiService = nuiService;
-            this.nuiService.SkeletonUpdated += new System.EventHandler<SkeletonUpdatedEventArgs>(nuiService_SkeletonUpdated);
+            this.nuiService.UserRaisedHand += new EventHandler<HandRaisedEventArgs>(nuiService_UserRaisedHand);
+            //this.nuiService.SkeletonUpdated += new System.EventHandler<SkeletonUpdatedEventArgs>(nuiService_SkeletonUpdated);
             this.nuiService.UserEnteredBounds += new EventHandler(nuiService_UserEnteredBounds);
             this.nuiService.UserExitedBounds += new EventHandler(nuiService_UserExitedBounds);
             this.ToggleCommand = new RelayCommand(this.ExecuteToggleCommand);
@@ -326,13 +323,13 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             }
         }
 
-        void nuiService_SkeletonUpdated(object sender, SkeletonUpdatedEventArgs e)
-        {
-            if (this.UserIsInRange)
-            {
-                this.CheckRaisedHand(e);
-            }
-        }
+        //void nuiService_SkeletonUpdated(object sender, SkeletonUpdatedEventArgs e)
+        //{
+        //    if (this.UserIsInRange)
+        //    {
+        //        this.CheckRaisedHand(e);
+        //    }
+        //}
 
         void nuiService_UserExitedBounds(object sender, EventArgs e)
         {
@@ -344,41 +341,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             this.UserIsInRange = true;
         }
 
-        void CheckRaisedHand(SkeletonUpdatedEventArgs e)
-        {
-            // user started raising their hand
-            if (!this.raisingRightHand & e.RightHandJoint.Position.Y >= e.HeadJoint.Position.Y)
-            {
-                this.raiseRightHandStart = DateTime.Now;
-                this.raisingRightHand = true;
-                return;
-            }
-
-            var elapsed = DateTime.Now - this.raiseRightHandStart;
-
-            // user lowered their hand before the time limit
-            if (this.raisingRightHand & e.RightHandJoint.Position.Y < e.HeadJoint.Position.Y & elapsed.TotalMilliseconds < RaiseHandMilliseconds)
-            {
-                this.raisingRightHand = false;
-                return;
-            }
-
-            // user kept their hand raised until the time limit
-            if (this.raisingRightHand & elapsed.TotalMilliseconds > RaiseHandMilliseconds & !this.waitingForRightHandToLower)
-            {
-                this.waitingForRightHandToLower = true;
-                this.ExecuteToggleCommand();
-                return;
-            }
-
-            // user lowered their hand after a "raise" was recorded.
-            if (this.raisingRightHand & this.waitingForRightHandToLower & e.RightHandJoint.Position.Y < e.HeadJoint.Position.Y)
-            {
-                this.waitingForRightHandToLower = false;
-                this.raisingRightHand = false;
-                return;
-            }
-        }
 
         void keyboardService_KeyUp(object sender, KeyEventArgs e)
         {
@@ -434,6 +396,11 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
         }
 
+        void nuiService_UserRaisedHand(object sender, HandRaisedEventArgs e)
+        {
+            this.ExecuteToggleCommand();
+        }
+
         void videoTimer_Tick(object sender, EventArgs e)
         {
             if (this.kinectVisionEnabled)
@@ -459,7 +426,9 @@ namespace GetSTEM.Model3DBrowser.ViewModels
         {
 
             this.keyboardService.KeyUp -= keyboardService_KeyUp;
-            this.nuiService.SkeletonUpdated -= nuiService_SkeletonUpdated;
+            this.nuiService.UserRaisedHand -= nuiService_UserRaisedHand;
+            this.nuiService.UserEnteredBounds -= nuiService_UserEnteredBounds;
+            this.nuiService.UserExitedBounds -= nuiService_UserExitedBounds;
             base.Cleanup();
         }
     }

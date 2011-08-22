@@ -4,6 +4,7 @@ using System.Windows;
 using Coding4Fun.Kinect.Wpf;
 using GetSTEM.Model3DBrowser.Logging;
 using Microsoft.Research.Kinect.Nui;
+using System.Collections.Generic;
 
 namespace GetSTEM.Model3DBrowser.Services
 {
@@ -12,15 +13,22 @@ namespace GetSTEM.Model3DBrowser.Services
         const int Zero = 0;
         const float SkeletonMaxX = 0.60f;
         const float SkeletonMaxY = 0.40f;
+        const double RaiseHandMilliseconds = 1500;
 
         bool initialized;
         int currentTrackingId;
         Runtime runtime;
+        Dictionary<JointID, bool> handsRaising;
+        Dictionary<JointID, DateTime> handsRaisingStart;
+        Dictionary<JointID, bool> handsWaitingToLower;
 
         public KinectNuiService()
         {
             try
             {
+                this.handsRaisingStart = new Dictionary<JointID, DateTime>();
+                this.handsRaising = new Dictionary<JointID, bool>();
+                this.handsWaitingToLower = new Dictionary<JointID, bool>();
                 this.BoundsWidth = .5d;
                 this.BoundsDepth = .5d;
                 this.MinDistanceFromCamera = 1.0d;
@@ -66,7 +74,8 @@ namespace GetSTEM.Model3DBrowser.Services
         public bool UserIsInRange
         {
             get { return this.userIsInRange; }
-            set {
+            set
+            {
                 var oldValue = this.userIsInRange;
                 if (value != oldValue)
                 {
@@ -88,7 +97,7 @@ namespace GetSTEM.Model3DBrowser.Services
                             this.UserEnteredBounds(this, EventArgs.Empty);
                         }
                     }
-                }            
+                }
             }
         }
 
@@ -144,55 +153,95 @@ namespace GetSTEM.Model3DBrowser.Services
 
         void ProcessSkeleton(SkeletonData skeleton)
         {
-            var rightHandJoint = skeleton.Joints[JointID.HandRight];
-            var leftHandJoint = skeleton.Joints[JointID.HandLeft];
+            this.CheckRaisedHand(
+                skeleton.Joints[JointID.HandRight],
+                skeleton.Joints[JointID.Head]);
 
-            var scaledRight = rightHandJoint
-                .ScaleTo(
-                (int)SystemParameters.PrimaryScreenWidth,
-                (int)SystemParameters.PrimaryScreenHeight,
-                SkeletonMaxX,
-                SkeletonMaxY);
-
-            var scaledLeft = leftHandJoint
-                .ScaleTo(
-                (int)SystemParameters.PrimaryScreenWidth,
-                (int)SystemParameters.PrimaryScreenHeight,
-                SkeletonMaxX,
-                SkeletonMaxY);
+            this.CheckRaisedHand(
+                skeleton.Joints[JointID.HandLeft],
+                skeleton.Joints[JointID.Head]);
 
             this.BroadcastSkeletonPositions(
-                rightHandJoint,
-                scaledRight,
-                leftHandJoint,
-                scaledLeft,
+                skeleton.Joints[JointID.HandRight],
+                skeleton.Joints[JointID.HandLeft],
                 skeleton.Joints[JointID.Spine],
                 skeleton.Joints[JointID.Head]);
         }
 
         void BroadcastSkeletonPositions(
             Joint rightHandJoint,
-            Joint scaledRightHandJoint,
             Joint leftHandJoint,
-            Joint scaledLeftHandJoint,
             Joint torsoJoint,
             Joint headJoint)
         {
             if (this.SkeletonUpdated != null)
             {
-                Application.Current.Dispatcher.BeginInvoke(
-                    new Action(() =>
-                    {
+                //Application.Current.Dispatcher.BeginInvoke(
+                //    new Action(() =>
+                //    {
                         this.SkeletonUpdated(this, new SkeletonUpdatedEventArgs()
                         {
                             RightHandJoint = rightHandJoint,
                             LeftHandJoint = leftHandJoint,
-                            ScaledRightHandJoint = scaledRightHandJoint,
-                            ScaledLeftHandJoint = scaledLeftHandJoint,
                             TorsoJoint = torsoJoint,
                             HeadJoint = headJoint
                         });
-                    }));
+                    //}));
+            }
+        }
+
+        void CheckRaisedHand(Joint hand, Joint head)
+        {
+            var id = hand.ID;
+            if (!this.handsRaising.ContainsKey(id))
+            {
+                this.handsRaising.Add(id, false);
+            }
+
+            if (!this.handsWaitingToLower.ContainsKey(id))
+            {
+                this.handsWaitingToLower.Add(id, false);
+            }
+
+            if (!this.handsRaisingStart.ContainsKey(id))
+            {
+                this.handsRaisingStart.Add(id, DateTime.MinValue);
+            }
+
+            // user started raising their hand
+            if (!this.handsRaising[id] & hand.Position.Y >= head.Position.Y)
+            {
+                this.handsRaisingStart[id] = DateTime.Now;
+                this.handsRaising[id] = true;
+                return;
+            }
+
+            var elapsed = DateTime.Now - this.handsRaisingStart[id];
+
+            // user lowered their hand before the time limit
+            if (this.handsRaising[id] & hand.Position.Y < head.Position.Y & elapsed.TotalMilliseconds < RaiseHandMilliseconds)
+            {
+                this.handsRaising[id] = false;
+                return;
+            }
+
+            // user kept their hand raised until the time limit
+            if (this.handsRaising[id] & elapsed.TotalMilliseconds > RaiseHandMilliseconds & !this.handsWaitingToLower[id])
+            {
+                this.handsWaitingToLower[id] = true;
+                if (this.UserRaisedHand != null)
+                {
+                    this.UserRaisedHand(this, new HandRaisedEventArgs() { JointId = id });
+                }
+                return;
+            }
+
+            // user lowered their hand after a "raise" was recorded.
+            if (this.handsRaising[id] & this.handsWaitingToLower[id] & hand.Position.Y < head.Position.Y)
+            {
+                this.handsWaitingToLower[id] = false;
+                this.handsRaising[id] = false;
+                return;
             }
         }
 
@@ -211,6 +260,7 @@ namespace GetSTEM.Model3DBrowser.Services
         }
 
         public event EventHandler<SkeletonUpdatedEventArgs> SkeletonUpdated;
+        public event EventHandler<HandRaisedEventArgs> UserRaisedHand;
         public event EventHandler UserEnteredBounds;
         public event EventHandler UserExitedBounds;
     }

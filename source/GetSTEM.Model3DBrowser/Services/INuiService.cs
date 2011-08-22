@@ -16,5 +16,6 @@ namespace GetSTEM.Model3DBrowser.Services
         event EventHandler<SkeletonUpdatedEventArgs> SkeletonUpdated;
         event EventHandler UserEnteredBounds;
         event EventHandler UserExitedBounds;
+        event EventHandler<HandRaisedEventArgs> UserRaisedHand;
     }
 }

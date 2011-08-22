@@ -14,6 +14,7 @@ namespace GetSTEM.Model3DBrowser.Services
         public bool IsInConfigMode { get; set; }
 
         public event EventHandler<SkeletonUpdatedEventArgs> SkeletonUpdated;
+        public event EventHandler<HandRaisedEventArgs> UserRaisedHand;
         public event EventHandler UserEnteredBounds;
         public event EventHandler UserExitedBounds;
     }

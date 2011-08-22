@@ -153,6 +153,7 @@
     <Compile Include="Services\AppConfigConfigurationService.cs" />
     <Compile Include="Services\DefaultKeyboardService.cs" />
     <Compile Include="Services\DesignConfigurationService.cs" />
+    <Compile Include="Services\HandRaisedEventArgs.cs" />
     <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="Services\IKeyboardService.cs" />
     <Compile Include="Services\INuiService.cs" />
