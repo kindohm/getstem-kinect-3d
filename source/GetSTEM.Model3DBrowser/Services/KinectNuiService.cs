@@ -231,6 +231,7 @@ namespace GetSTEM.Model3DBrowser.Services
                 this.handsWaitingToLower[id] = true;
                 if (this.UserRaisedHand != null)
                 {
+                    DebugLogWriter.WriteMessage("User raised hand with ID '" + id.ToString() + "'");
                     this.UserRaisedHand(this, new HandRaisedEventArgs() { JointId = id });
                 }
                 return;

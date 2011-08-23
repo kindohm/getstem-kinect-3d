@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GetSTEM.Model3DBrowser.Messages;
 using GetSTEM.Model3DBrowser.Services;
+using Microsoft.Research.Kinect.Nui;
 
 namespace GetSTEM.Model3DBrowser.ViewModels
 {
@@ -417,7 +418,14 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
         void nuiService_UserRaisedHand(object sender, HandRaisedEventArgs e)
         {
-            this.ExecuteToggleCommand();
+            if (e.JointId == JointID.HandRight)
+            {
+                this.ExecuteToggleCommand();
+            }
+            else if (e.JointId == JointID.HandLeft)
+            {
+                this.ExecuteToggleKinectVisionCommand();
+            }
         }
 
         void videoTimer_Tick(object sender, EventArgs e)
