@@ -17,19 +17,25 @@
             Background="#00CCCCFF">
             <StackPanel>
                 <TextBlock
+                    Style="{DynamicResource Label}"
                     FontWeight="Bold"
                     Text="Y Axis Rotation"/>
                 <TextBlock
+                    Style="{DynamicResource Label}"
                     Text="{Binding RotationYEquation}"/>
                 <TextBlock
+                    Style="{DynamicResource Label}"
                     Text="{Binding RotationYEquationActual}"/>
                 <TextBlock
+                    Style="{DynamicResource Label}"
                     Margin="0 20 0 0"
                     FontWeight="Bold"
                     Text="X Axis Rotation"/>
                 <TextBlock
+                    Style="{DynamicResource Label}"
                     Text="{Binding RotationXEquation}"/>
                 <TextBlock
+                    Style="{DynamicResource Label}"
                     Text="{Binding RotationXEquationActual}"/>
             </StackPanel>
         </Border>

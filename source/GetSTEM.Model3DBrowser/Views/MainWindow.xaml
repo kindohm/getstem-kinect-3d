@@ -56,18 +56,21 @@
             VerticalAlignment="Top">
 
             <Button
+                Style="{DynamicResource StandardButton}"
                 Margin="10"
                 Padding="5"
                 Command="{Binding ToggleCommand}"
                 Content="{Binding ToggleContent}"/>
 
             <Button
+                Style="{DynamicResource StandardButton}"
                 Margin="10"
                 Padding="5"
                 Command="{Binding AutoPlayCommand}"
                 Content="Auto Play"/>
 
             <Button                
+                Style="{DynamicResource StandardButton}"
                 Margin="10"
                 Padding="5"
                 Command="{Binding ToggleKinectVisionCommand}"

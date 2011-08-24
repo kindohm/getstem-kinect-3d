@@ -123,10 +123,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\InfoView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -177,9 +173,6 @@
     <Compile Include="Framework\ViewModelLocator.cs" />
     <Compile Include="Views\Explorer.xaml.cs">
       <DependentUpon>Explorer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\InfoView.xaml.cs">
-      <DependentUpon>InfoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

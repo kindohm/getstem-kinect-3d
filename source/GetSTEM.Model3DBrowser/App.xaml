@@ -18,12 +18,18 @@
             <GradientStop Offset="1" Color="#999999"/>
         </RadialGradientBrush>
 
-        <Style TargetType="TextBlock">
+        <Style TargetType="TextBlock" x:Key="Label">
             <Setter Property="Foreground" Value="#EECCCCCC"/>
             <Setter Property="FontSize" Value="30"/>
             <Setter Property="FontFamily" Value="Arial"/>
             <Setter Property="Margin" Value="2"/>
         </Style>
+
+        <Style TargetType="Button" x:Key="StandardButton">
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+
 
     </Application.Resources>
 </Application>
