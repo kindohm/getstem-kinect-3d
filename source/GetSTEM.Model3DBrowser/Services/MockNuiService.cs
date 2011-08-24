@@ -6,7 +6,6 @@ namespace GetSTEM.Model3DBrowser.Services
     public class MockNuiService : INuiService
     {
         public void Shutdown() { }
-        public ImageFrame LastVideoFrame { get; set; }
         public ImageFrame LastDepthFrame { get; set; }
         public double BoundsWidth { get; set; }
         public double BoundsDepth { get; set; }

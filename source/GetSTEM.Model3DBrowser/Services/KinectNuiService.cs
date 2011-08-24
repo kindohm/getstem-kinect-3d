@@ -34,9 +34,10 @@ namespace GetSTEM.Model3DBrowser.Services
                 this.MinDistanceFromCamera = 1.0d;
                 this.runtime = new Runtime();
                 this.runtime.SkeletonFrameReady += new EventHandler<SkeletonFrameReadyEventArgs>(runtime_SkeletonFrameReady);
-                this.runtime.VideoFrameReady += new EventHandler<ImageFrameReadyEventArgs>(runtime_VideoFrameReady);
                 this.runtime.DepthFrameReady += new EventHandler<ImageFrameReadyEventArgs>(runtime_DepthFrameReady);
-                this.runtime.Initialize(RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor | RuntimeOptions.UseDepthAndPlayerIndex);
+                this.runtime.Initialize(
+                    RuntimeOptions.UseSkeletalTracking | 
+                    RuntimeOptions.UseDepthAndPlayerIndex);
                 this.initialized = true;
 
                 this.runtime.SkeletonEngine.TransformSmooth = true;
@@ -48,12 +49,8 @@ namespace GetSTEM.Model3DBrowser.Services
                 parameters.MaxDeviationRadius = 0.5f;
                 runtime.SkeletonEngine.SmoothParameters = parameters;
 
-                runtime.VideoStream.Open(ImageStreamType.Video, 2,
-                   ImageResolution.Resolution640x480, ImageType.Color);
-
                 runtime.DepthStream.Open(ImageStreamType.Depth, 2,
                     ImageResolution.Resolution320x240, ImageType.DepthAndPlayerIndex);
-
 
                 DebugLogWriter.WriteMessage("Kinect initialized.");
             }
@@ -63,7 +60,6 @@ namespace GetSTEM.Model3DBrowser.Services
             }
         }
 
-        public ImageFrame LastVideoFrame { get; set; }
         public ImageFrame LastDepthFrame { get; set; }
         public double BoundsWidth { get; set; }
         public double BoundsDepth { get; set; }
@@ -104,11 +100,6 @@ namespace GetSTEM.Model3DBrowser.Services
         void runtime_DepthFrameReady(object sender, ImageFrameReadyEventArgs e)
         {
             this.LastDepthFrame = e.ImageFrame;
-        }
-
-        void runtime_VideoFrameReady(object sender, ImageFrameReadyEventArgs e)
-        {
-            this.LastVideoFrame = e.ImageFrame;
         }
 
         void runtime_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)

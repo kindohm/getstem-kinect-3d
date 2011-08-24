@@ -5,7 +5,6 @@ namespace GetSTEM.Model3DBrowser.Services
 {
     public interface INuiService
     {
-        ImageFrame LastVideoFrame { get; set; }
         ImageFrame LastDepthFrame { get; set; }
         double BoundsWidth { get; set; }
         double BoundsDepth { get; set; }

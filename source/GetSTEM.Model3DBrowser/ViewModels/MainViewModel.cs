@@ -16,6 +16,7 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        const double ImageWidthFactor = 4d;
 
         bool stemView;
         bool kinectVisionEnabled;
@@ -160,27 +161,7 @@ namespace GetSTEM.Model3DBrowser.ViewModels
                 kinectVisionVisibility = value;
                 RaisePropertyChanged(KinectVisionVisibilityPropertyName);
             }
-        }
-
-        public const string VideoBitmapSourcePropertyName = "VideoBitmapSource";
-        BitmapSource videoBitmapSource = null;
-        public BitmapSource VideoBitmapSource
-        {
-            get
-            {
-                return videoBitmapSource;
-            }
-            set
-            {
-                if (videoBitmapSource == value)
-                {
-                    return;
-                }
-                var oldValue = videoBitmapSource;
-                videoBitmapSource = value;
-                RaisePropertyChanged(VideoBitmapSourcePropertyName);
-            }
-        }
+        }      
 
         public const string DepthBitmapSourcePropertyName = "DepthBitmapSource";
         BitmapSource depthBitmapSource = null;
@@ -432,11 +413,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
         {
             if (this.kinectVisionEnabled)
             {
-                if (this.nuiService.LastVideoFrame != null)
-                {
-                    this.VideoBitmapSource = this.nuiService.LastVideoFrame.ToBitmapSource();
-                }
-
                 if (this.nuiService.LastDepthFrame != null)
                 {
                     this.DepthBitmapSource = this.nuiService.LastDepthFrame.ToBitmapSource();
@@ -446,7 +422,7 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
         void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.ImageWidth = e.NewSize.Width / 5d;
+            this.ImageWidth = e.NewSize.Width / ImageWidthFactor;
         }
 
         public override void Cleanup()
