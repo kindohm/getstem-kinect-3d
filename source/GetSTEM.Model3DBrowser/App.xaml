@@ -14,8 +14,8 @@
         <RadialGradientBrush 
             x:Key="DefaultBackground"
             Center=".5,.8" GradientOrigin=".5,.8" RadiusX=".5" RadiusY=".3">
-            <GradientStop Offset="0" Color="#913A75"/>
-            <GradientStop Offset="1" Color="#190A14"/>
+            <GradientStop Offset="0" Color="#FFFFFF"/>
+            <GradientStop Offset="1" Color="#999999"/>
         </RadialGradientBrush>
 
         <Style TargetType="TextBlock">
