@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
-using GetSTEM.Model3DBrowser.Services;
-using GetSTEM.Model3DBrowser.Messages;
 using GalaSoft.MvvmLight.Messaging;
 using GetSTEM.Model3DBrowser.Logging;
+using GetSTEM.Model3DBrowser.Messages;
+using GetSTEM.Model3DBrowser.Services;
 
 namespace GetSTEM.Model3DBrowser.ViewModels
 {
@@ -19,6 +19,9 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             this.nuiService.SkeletonUpdated += new EventHandler<SkeletonUpdatedEventArgs>(nuiService_SkeletonUpdated);
             this.nuiService.UserEnteredBounds += new EventHandler(nuiService_UserEnteredBounds);
             this.nuiService.UserExitedBounds += new EventHandler(nuiService_UserExitedBounds);
+            this.nuiService.BoundsDepth = this.BoundsDepth;
+            this.nuiService.BoundsWidth = this.BoundsWidth;
+            this.nuiService.MinDistanceFromCamera = this.MinDistanceFromCamera;
             Messenger.Default.Register<BoundingBoxEnabledMessage>(this, this.HandleBoundingBoxEnabledMessage);
         }
 
