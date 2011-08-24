@@ -20,7 +20,7 @@
 
         <Style TargetType="TextBlock" x:Key="Label">
             <Setter Property="Foreground" Value="#EECCCCCC"/>
-            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontSize" Value="25"/>
             <Setter Property="FontFamily" Value="Arial"/>
             <Setter Property="Margin" Value="2"/>
         </Style>

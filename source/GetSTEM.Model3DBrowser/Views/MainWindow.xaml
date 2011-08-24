@@ -18,6 +18,7 @@
             Source="/Images/mhta.png"/>
 
         <views:MathView 
+            Margin="0 30 0 0"
             Visibility="{Binding Main.MathVisibility, Source={StaticResource Locator}}"
             DataContext="{Binding Math, Source={StaticResource Locator}}" />
 

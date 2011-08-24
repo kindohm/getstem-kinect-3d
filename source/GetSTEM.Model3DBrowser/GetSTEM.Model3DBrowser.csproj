@@ -203,6 +203,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <Resource Include="Images\mhta.png" />
+    <Resource Include="Images\MHTA.jpg" />
     <Content Include="ModelFiles\E-cap.3ds">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
