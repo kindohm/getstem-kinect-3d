@@ -1,10 +1,10 @@
 ﻿using System;
-using Microsoft.Research.Kinect.Nui;
+using Microsoft.Kinect;
 
 namespace GetSTEM.Model3DBrowser.Services
 {
     public class HandRaisedEventArgs : EventArgs
     {
-        public JointID JointId { get; set; }
+        public JointType JointId { get; set; }
     }
 }

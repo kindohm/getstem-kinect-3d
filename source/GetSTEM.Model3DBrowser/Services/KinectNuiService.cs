@@ -1,57 +1,61 @@
 ﻿using System;
-using System.Linq;
-using System.Windows;
-using Coding4Fun.Kinect.Wpf;
-using GetSTEM.Model3DBrowser.Logging;
-using Microsoft.Research.Kinect.Nui;
 using System.Collections.Generic;
+using System.Linq;
+using GetSTEM.Model3DBrowser.Logging;
+using Microsoft.Kinect;
+using System.Windows.Media.Imaging;
+using Coding4Fun.Kinect.Wpf;
 
 namespace GetSTEM.Model3DBrowser.Services
 {
     public class KinectNuiService : INuiService
     {
         const int Zero = 0;
+        const int Two = 2;
         const float SkeletonMaxX = 0.60f;
         const float SkeletonMaxY = 0.40f;
         const double RaiseHandMilliseconds = 1500;
 
         bool initialized;
         int currentTrackingId;
-        Runtime runtime;
-        Dictionary<JointID, bool> handsRaising;
-        Dictionary<JointID, DateTime> handsRaisingStart;
-        Dictionary<JointID, bool> handsWaitingToLower;
+        KinectSensor sensor;
+        Dictionary<JointType, bool> handsRaising;
+        Dictionary<JointType, DateTime> handsRaisingStart;
+        Dictionary<JointType, bool> handsWaitingToLower;
+        SkeletonFrame skeletonFrame;
+        Skeleton[] sensorSkeletons = new Skeleton[6];
 
         public KinectNuiService()
         {
             try
             {
-                this.handsRaisingStart = new Dictionary<JointID, DateTime>();
-                this.handsRaising = new Dictionary<JointID, bool>();
-                this.handsWaitingToLower = new Dictionary<JointID, bool>();
+                this.handsRaisingStart = new Dictionary<JointType, DateTime>();
+                this.handsRaising = new Dictionary<JointType, bool>();
+                this.handsWaitingToLower = new Dictionary<JointType, bool>();
                 this.BoundsWidth = .5d;
                 this.BoundsDepth = .5d;
                 this.MinDistanceFromCamera = 1.0d;
-                this.runtime = new Runtime();
-                this.runtime.SkeletonFrameReady += new EventHandler<SkeletonFrameReadyEventArgs>(runtime_SkeletonFrameReady);
-                this.runtime.DepthFrameReady += new EventHandler<ImageFrameReadyEventArgs>(runtime_DepthFrameReady);
-                this.runtime.Initialize(
-                    RuntimeOptions.UseSkeletalTracking | 
-                    RuntimeOptions.UseDepthAndPlayerIndex);
+                this.sensor = KinectSensor.KinectSensors[0];
+                //this.sensor.SkeletonFrameReady += new EventHandler<SkeletonFrameReadyEventArgs>(runtime_SkeletonFrameReady);
+                //this.sensor.DepthFrameReady += new EventHandler<DepthImageFrameReadyEventArgs>(runtime_DepthFrameReady);
+                this.sensor.AllFramesReady += new EventHandler<AllFramesReadyEventArgs>(sensor_AllFramesReady);
+                //this.sensor.Initialize(
+                //    RuntimeOptions.UseSkeletalTracking | 
+                //    RuntimeOptions.UseDepthAndPlayerIndex);
                 this.initialized = true;
 
-                this.runtime.SkeletonEngine.TransformSmooth = true;
                 var parameters = new TransformSmoothParameters();
                 parameters.Smoothing = 0.7f;
                 parameters.Correction = 0.9f;
                 parameters.Prediction = 0.5f;
                 parameters.JitterRadius = 0.5f;
                 parameters.MaxDeviationRadius = 0.5f;
-                runtime.SkeletonEngine.SmoothParameters = parameters;
 
-                runtime.DepthStream.Open(ImageStreamType.Depth, 2,
-                    ImageResolution.Resolution320x240, ImageType.DepthAndPlayerIndex);
+                this.sensor.SkeletonStream.Enable(parameters);
+                this.sensor.SkeletonStream.Enable();
+                this.sensor.DepthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
 
+                this.sensor.Start();
                 DebugLogWriter.WriteMessage("Kinect initialized.");
             }
             catch (InvalidOperationException)
@@ -60,7 +64,7 @@ namespace GetSTEM.Model3DBrowser.Services
             }
         }
 
-        public ImageFrame LastDepthFrame { get; set; }
+        public BitmapSource LastDepthBitmap { get; set; }
         public double BoundsWidth { get; set; }
         public double BoundsDepth { get; set; }
         public double MinDistanceFromCamera { get; set; }
@@ -97,66 +101,89 @@ namespace GetSTEM.Model3DBrowser.Services
             }
         }
 
-        void runtime_DepthFrameReady(object sender, ImageFrameReadyEventArgs e)
+        void sensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
         {
-            this.LastDepthFrame = e.ImageFrame;
+
+            using (this.skeletonFrame = e.OpenSkeletonFrame())
+            {
+                if (this.skeletonFrame == null)
+                {
+                    return;
+                }
+
+                var depthFrame = e.OpenDepthImageFrame();
+                if (depthFrame != null)
+                {
+                    this.LastDepthBitmap = depthFrame.ToBitmapSource();
+                    depthFrame.Dispose();
+                }
+                
+                this.skeletonFrame.CopySkeletonDataTo(this.sensorSkeletons);
+
+                var trackedSkeletons = this.sensorSkeletons.Where(s =>
+                    s.TrackingState == SkeletonTrackingState.Tracked);
+
+                var count = trackedSkeletons.Count();
+
+                if (count == Zero)
+                {
+                    this.currentTrackingId = int.MinValue;
+                    return;
+                }
+
+                var trackedSkeleton =
+                    trackedSkeletons.Where(s => s.TrackingId == this.currentTrackingId).FirstOrDefault();
+
+                if (trackedSkeleton == null) // new user
+                {
+                    trackedSkeleton = trackedSkeletons.FirstOrDefault();
+                    this.currentTrackingId = trackedSkeleton.TrackingId;
+                    InfoLogWriter.WriteMessage("Started tracking new user with ID '" + this.currentTrackingId.ToString() + "'");
+                }
+
+                this.UserIsInRange = this.GetUserIsInRange(trackedSkeleton.Joints[JointType.Spine]);
+
+                if (this.UserIsInRange || this.IsInConfigMode)
+                {
+                    this.ProcessSkeleton(trackedSkeleton);
+                }
+            }
+
+
         }
 
-        void runtime_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
-        {
-            var skeletons = e.SkeletonFrame.Skeletons.Where(s =>
-                s.TrackingState == SkeletonTrackingState.Tracked);
+        //void runtime_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
+        //{
+        //}
 
-            var count = skeletons.Count();
-
-            if (count == Zero)
-            {
-                this.currentTrackingId = int.MinValue;
-                return;
-            }
-
-            var trackedSkeleton =
-                skeletons.Where(s => s.TrackingID == this.currentTrackingId).FirstOrDefault();
-
-            if (trackedSkeleton == null) // new user
-            {
-                trackedSkeleton = skeletons.FirstOrDefault();
-                this.currentTrackingId = trackedSkeleton.TrackingID;
-                InfoLogWriter.WriteMessage("Started tracking new user with ID '" + this.currentTrackingId.ToString() + "'");
-            }
-
-            this.UserIsInRange = this.GetUserIsInRange(trackedSkeleton.Joints[JointID.Spine]);
-
-            if (this.UserIsInRange || this.IsInConfigMode)
-            {
-                this.ProcessSkeleton(trackedSkeleton);
-            }
-        }
+        //void runtime_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        //{
+        //}
 
         bool GetUserIsInRange(Joint torso)
         {
             var torsoPosition = torso.Position;
-            return torsoPosition.Z > this.MinDistanceFromCamera &
-                torsoPosition.Z < (this.MinDistanceFromCamera + this.BoundsDepth)
-                & torsoPosition.X > -this.BoundsWidth / 2 &
-                torsoPosition.X < this.BoundsWidth / 2;
+            return torsoPosition.Z > this.MinDistanceFromCamera &&
+                torsoPosition.Z < (this.MinDistanceFromCamera + this.BoundsDepth) && 
+                torsoPosition.X > -this.BoundsWidth / Two &&
+                torsoPosition.X < this.BoundsWidth / Two;
         }
 
-        void ProcessSkeleton(SkeletonData skeleton)
+        void ProcessSkeleton(Skeleton skeleton)
         {
             this.CheckRaisedHand(
-                skeleton.Joints[JointID.HandRight],
-                skeleton.Joints[JointID.Head]);
+                skeleton.Joints[JointType.HandRight],
+                skeleton.Joints[JointType.Head]);
 
             this.CheckRaisedHand(
-                skeleton.Joints[JointID.HandLeft],
-                skeleton.Joints[JointID.Head]);
+                skeleton.Joints[JointType.HandLeft],
+                skeleton.Joints[JointType.Head]);
 
             this.BroadcastSkeletonPositions(
-                skeleton.Joints[JointID.HandRight],
-                skeleton.Joints[JointID.HandLeft],
-                skeleton.Joints[JointID.Spine],
-                skeleton.Joints[JointID.Head]);
+                skeleton.Joints[JointType.HandRight],
+                skeleton.Joints[JointType.HandLeft],
+                skeleton.Joints[JointType.Spine],
+                skeleton.Joints[JointType.Head]);
         }
 
         void BroadcastSkeletonPositions(
@@ -167,23 +194,19 @@ namespace GetSTEM.Model3DBrowser.Services
         {
             if (this.SkeletonUpdated != null)
             {
-                //Application.Current.Dispatcher.BeginInvoke(
-                //    new Action(() =>
-                //    {
-                        this.SkeletonUpdated(this, new SkeletonUpdatedEventArgs()
-                        {
-                            RightHandJoint = rightHandJoint,
-                            LeftHandJoint = leftHandJoint,
-                            TorsoJoint = torsoJoint,
-                            HeadJoint = headJoint
-                        });
-                    //}));
+                this.SkeletonUpdated(this, new SkeletonUpdatedEventArgs()
+                {
+                    RightHandJoint = rightHandJoint,
+                    LeftHandJoint = leftHandJoint,
+                    TorsoJoint = torsoJoint,
+                    HeadJoint = headJoint
+                });
             }
         }
 
         void CheckRaisedHand(Joint hand, Joint head)
         {
-            var id = hand.ID;
+            var id = hand.JointType;
             if (!this.handsRaising.ContainsKey(id))
             {
                 this.handsRaising.Add(id, false);
@@ -239,14 +262,15 @@ namespace GetSTEM.Model3DBrowser.Services
 
         public void Shutdown()
         {
-            if (this.runtime != null)
+            if (this.sensor != null)
             {
-                this.runtime.SkeletonFrameReady -= runtime_SkeletonFrameReady;
+                //this.sensor.SkeletonFrameReady -= runtime_SkeletonFrameReady;
+                this.sensor.AllFramesReady -= this.sensor_AllFramesReady;
                 if (this.initialized)
                 {
-                    this.runtime.Uninitialize();
+                    this.sensor.Stop();
                     InfoLogWriter.WriteMessage("Kinect runtime uninitialized.");
-                    this.runtime = null;
+                    this.sensor = null;
                 }
             }
         }

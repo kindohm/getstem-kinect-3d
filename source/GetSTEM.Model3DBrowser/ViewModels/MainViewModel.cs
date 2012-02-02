@@ -4,13 +4,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Coding4Fun.Kinect.Wpf;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GetSTEM.Model3DBrowser.Messages;
 using GetSTEM.Model3DBrowser.Services;
-using Microsoft.Research.Kinect.Nui;
+using Microsoft.Kinect;
 
 namespace GetSTEM.Model3DBrowser.ViewModels
 {
@@ -51,8 +50,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             }
 
         }
-
-        #region " properties "
 
         public RelayCommand ToggleKinectVisionCommand { get; set; }
         public RelayCommand ToggleCommand { get; private set; }
@@ -283,8 +280,6 @@ namespace GetSTEM.Model3DBrowser.ViewModels
             }
         }
 
-        #endregion
-
         void ExecuteAutoPlayCommand()
         {
             Messenger.Default.Send<AutoPlayMessage>(new AutoPlayMessage());
@@ -323,15 +318,7 @@ namespace GetSTEM.Model3DBrowser.ViewModels
                 this.KinectVisionVisibility = Visibility.Visible;
             }
         }
-
-        //void nuiService_SkeletonUpdated(object sender, SkeletonUpdatedEventArgs e)
-        //{
-        //    if (this.UserIsInRange)
-        //    {
-        //        this.CheckRaisedHand(e);
-        //    }
-        //}
-
+      
         void nuiService_UserExitedBounds(object sender, EventArgs e)
         {
             this.UserIsInRange = false;
@@ -399,11 +386,11 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
         void nuiService_UserRaisedHand(object sender, HandRaisedEventArgs e)
         {
-            if (e.JointId == JointID.HandRight)
+            if (e.JointId == JointType.HandRight)
             {
                 this.ExecuteToggleCommand();
             }
-            else if (e.JointId == JointID.HandLeft)
+            else if (e.JointId == JointType.HandLeft)
             {
                 this.ExecuteToggleKinectVisionCommand();
             }
@@ -413,10 +400,7 @@ namespace GetSTEM.Model3DBrowser.ViewModels
         {
             if (this.kinectVisionEnabled)
             {
-                if (this.nuiService.LastDepthFrame != null)
-                {
-                    this.DepthBitmapSource = this.nuiService.LastDepthFrame.ToBitmapSource();
-                }
+                this.DepthBitmapSource = this.nuiService.LastDepthBitmap;
             }
         }
 

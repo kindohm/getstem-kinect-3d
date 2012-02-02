@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Research.Kinect.Nui;
+using Microsoft.Kinect;
 
 namespace GetSTEM.Model3DBrowser.Services
 {

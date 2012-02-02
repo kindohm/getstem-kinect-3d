@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.Research.Kinect.Nui;
+using System.Windows.Media.Imaging;
 
 namespace GetSTEM.Model3DBrowser.Services
 {
     public interface INuiService
     {
-        ImageFrame LastDepthFrame { get; set; }
+        BitmapSource LastDepthBitmap { get; set; }
         double BoundsWidth { get; set; }
         double BoundsDepth { get; set; }
         double MinDistanceFromCamera { get; set; }
