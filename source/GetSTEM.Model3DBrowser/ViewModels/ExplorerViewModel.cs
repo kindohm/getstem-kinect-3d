@@ -16,7 +16,7 @@ namespace GetSTEM.Model3DBrowser.ViewModels
     {
         const double MinZoom = 3;
         const double MaxZoom = 500;
-        const float MinTorsoDistance = .4f;
+        const float MinTorsoDistance = .3f;
 
         bool userIsInRange;
         bool leftHandCanMove;
