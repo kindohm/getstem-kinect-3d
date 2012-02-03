@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GetSTEM.Model3DBrowser.Logging;
-using Microsoft.Kinect;
 using System.Windows.Media.Imaging;
 using Coding4Fun.Kinect.Wpf;
+using GetSTEM.Model3DBrowser.Logging;
+using Microsoft.Kinect;
 
 namespace GetSTEM.Model3DBrowser.Services
 {
@@ -27,41 +27,35 @@ namespace GetSTEM.Model3DBrowser.Services
 
         public KinectNuiService()
         {
-            try
+            if (KinectSensor.KinectSensors.Count == 0)
             {
-                this.handsRaisingStart = new Dictionary<JointType, DateTime>();
-                this.handsRaising = new Dictionary<JointType, bool>();
-                this.handsWaitingToLower = new Dictionary<JointType, bool>();
-                this.BoundsWidth = .5d;
-                this.BoundsDepth = .5d;
-                this.MinDistanceFromCamera = 1.0d;
-                this.sensor = KinectSensor.KinectSensors[0];
-                //this.sensor.SkeletonFrameReady += new EventHandler<SkeletonFrameReadyEventArgs>(runtime_SkeletonFrameReady);
-                //this.sensor.DepthFrameReady += new EventHandler<DepthImageFrameReadyEventArgs>(runtime_DepthFrameReady);
-                this.sensor.AllFramesReady += new EventHandler<AllFramesReadyEventArgs>(sensor_AllFramesReady);
-                //this.sensor.Initialize(
-                //    RuntimeOptions.UseSkeletalTracking | 
-                //    RuntimeOptions.UseDepthAndPlayerIndex);
-                this.initialized = true;
-
-                var parameters = new TransformSmoothParameters();
-                parameters.Smoothing = 0.7f;
-                parameters.Correction = 0.9f;
-                parameters.Prediction = 0.5f;
-                parameters.JitterRadius = 0.5f;
-                parameters.MaxDeviationRadius = 0.5f;
-
-                this.sensor.SkeletonStream.Enable(parameters);
-                this.sensor.SkeletonStream.Enable();
-                this.sensor.DepthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
-
-                this.sensor.Start();
-                DebugLogWriter.WriteMessage("Kinect initialized.");
+                return;
             }
-            catch (InvalidOperationException)
-            {
-                ErrorLogWriter.WriteMessage("Kinect not connected, or there was a device problem.");
-            }
+
+            this.handsRaisingStart = new Dictionary<JointType, DateTime>();
+            this.handsRaising = new Dictionary<JointType, bool>();
+            this.handsWaitingToLower = new Dictionary<JointType, bool>();
+            this.BoundsWidth = .5d;
+            this.BoundsDepth = .5d;
+            this.MinDistanceFromCamera = 1.0d;
+            this.sensor = KinectSensor.KinectSensors[0];
+            this.sensor.AllFramesReady += new EventHandler<AllFramesReadyEventArgs>(sensor_AllFramesReady);
+            this.initialized = true;
+
+            var parameters = new TransformSmoothParameters();
+            parameters.Smoothing = 0.7f;
+            parameters.Correction = 0.9f;
+            parameters.Prediction = 0.5f;
+            parameters.JitterRadius = 0.5f;
+            parameters.MaxDeviationRadius = 0.5f;
+
+            this.sensor.SkeletonStream.Enable(parameters);
+            this.sensor.SkeletonStream.Enable();
+            this.sensor.DepthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
+
+            this.sensor.Start();
+            DebugLogWriter.WriteMessage("Kinect initialized.");
+
         }
 
         public BitmapSource LastDepthBitmap { get; set; }
@@ -117,7 +111,7 @@ namespace GetSTEM.Model3DBrowser.Services
                     this.LastDepthBitmap = depthFrame.ToBitmapSource();
                     depthFrame.Dispose();
                 }
-                
+
                 this.skeletonFrame.CopySkeletonDataTo(this.sensorSkeletons);
 
                 var trackedSkeletons = this.sensorSkeletons.Where(s =>
@@ -164,7 +158,7 @@ namespace GetSTEM.Model3DBrowser.Services
         {
             var torsoPosition = torso.Position;
             return torsoPosition.Z > this.MinDistanceFromCamera &&
-                torsoPosition.Z < (this.MinDistanceFromCamera + this.BoundsDepth) && 
+                torsoPosition.Z < (this.MinDistanceFromCamera + this.BoundsDepth) &&
                 torsoPosition.X > -this.BoundsWidth / Two &&
                 torsoPosition.X < this.BoundsWidth / Two;
         }

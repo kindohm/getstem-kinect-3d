@@ -3,7 +3,7 @@
   <LetterModels>
 
     <LetterModel>
-      <ModelPath>ModelFiles\g.3ds</ModelPath>
+      <ModelPath>ModelResources/g.xaml</ModelPath>
       <Color>#FFFFFF</Color>
       <OffsetX>-120</OffsetX>
       <OffsetY>-7</OffsetY>
@@ -12,7 +12,7 @@
     </LetterModel>
 
     <LetterModel>
-      <ModelPath>ModelFiles\e.3ds</ModelPath>
+      <ModelPath>ModelResources/e.xaml</ModelPath>
       <Color>#FFFFFF</Color>
       <OffsetX>-85</OffsetX>
       <OffsetY>-4.5</OffsetY>
@@ -21,7 +21,7 @@
     </LetterModel>
 
     <LetterModel>
-      <ModelPath>ModelFiles\t.3ds</ModelPath>
+      <ModelPath>ModelResources/t.xaml</ModelPath>
       <Color>#FFFFFF</Color>
       <OffsetX>-60</OffsetX>
       <OffsetY>0</OffsetY>
@@ -30,7 +30,7 @@
     </LetterModel>
 
     <LetterModel>
-      <ModelPath>ModelFiles\S.3ds</ModelPath>
+      <ModelPath>ModelResources/s.xaml</ModelPath>
       <Color>#039BDA</Color>
       <OffsetX>-5</OffsetX>
       <OffsetY>0</OffsetY>
@@ -38,7 +38,7 @@
     </LetterModel>
 
     <LetterModel>
-      <ModelPath>ModelFiles\T-cap.3ds</ModelPath>
+      <ModelPath>ModelResources/tcap.xaml</ModelPath>
       <Color>#C2CE22</Color>
       <OffsetX>17</OffsetX>
       <OffsetY>5</OffsetY>
@@ -46,7 +46,7 @@
     </LetterModel>
 
     <LetterModel>
-      <ModelPath>ModelFiles\E-cap.3ds</ModelPath>
+      <ModelPath>ModelResources/ecap.xaml</ModelPath>
       <Color>#CA2B92</Color>
       <OffsetX>37</OffsetX>
       <OffsetY>-5</OffsetY>
@@ -54,7 +54,7 @@
     </LetterModel>
     
     <LetterModel>
-      <ModelPath>ModelFiles\M.3ds</ModelPath>
+      <ModelPath>ModelResources/m.xaml</ModelPath>
       <Color>#F8A01A</Color>
       <OffsetX>78</OffsetX>
       <OffsetY>0</OffsetY>

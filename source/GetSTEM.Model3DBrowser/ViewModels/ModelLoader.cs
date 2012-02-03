@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using _3DTools;
-using Ab3d;
 using GetSTEM.Model3DBrowser.Services;
 using Petzold.Media3D;
 
@@ -34,16 +34,17 @@ namespace GetSTEM.Model3DBrowser.ViewModels
 
             foreach (var letter in modelConfig.LetterModels)
             {
-                var reader = new Reader3ds();
-                var thing = reader.ReadFile(letter.ModelPath);
-                var internalModel = GetModelFromGroup(thing);
-
-                if (internalModel == null)
+                var dictionary = new ResourceDictionary()
                 {
-                    throw new InvalidOperationException("3D Model could not be found in 3DS file '" + letter.ModelPath + "'");
-                }
+                    Source = new Uri(letter.ModelPath, UriKind.Relative)
+                };
 
-                var mesh = (MeshGeometry3D)internalModel.Geometry;
+                var mesh = (MeshGeometry3D)dictionary["mesh"];
+
+                if (mesh == null)
+                {
+                    throw new InvalidOperationException("3D Mesh could not be read in XAML file '" + letter.ModelPath + "'");
+                }
 
                 var brush = new SolidColorBrush(
                     (Color)ColorConverter.ConvertFromString(letter.Color));
